@@ -35,6 +35,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+      - run: npm run lint
       - run: npm run build
 
   # TODO(build-order step 7): accuracy + latency gate job. Makes real
