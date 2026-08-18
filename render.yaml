@@ -1,0 +1,19 @@
+# Render blueprint for the backend. Not yet deployed; kept deploy-ready per
+# build-order step 1 (docs/approach.md section 8). The paid Starter plan is a
+# deliberate choice: free-tier spin-down would put a ~1 minute cold start in
+# front of the 5-second latency requirement (ADR-007).
+services:
+  - type: web
+    name: label-verification-api
+    runtime: python
+    plan: starter
+    rootDir: backend
+    buildCommand: uv sync --frozen --no-dev
+    startCommand: uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false # set in the Render dashboard, never in this file
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: ALLOWED_ORIGINS
+        sync: false # Vercel production + preview origins, set at deploy time
