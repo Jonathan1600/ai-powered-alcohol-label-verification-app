@@ -4,6 +4,9 @@ Design document for the TTB label verification prototype. Written before
 implementation, from the stakeholder interview requirements. Records the
 architectural decisions, the reasoning behind them, and the open risks.
 
+See [architecture.md](./architecture.md) for the system diagrams and the short
+form decision records.
+
 ## 1. Problem statement
 
 Given a label photograph and a set of claimed application field values, decide
