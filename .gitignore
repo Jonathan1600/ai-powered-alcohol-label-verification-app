@@ -2,3 +2,13 @@ temp/
 .env
 .env.local
 .env.*.local
+
+# Node
+node_modules/
+frontend/dist/
+
+# Python
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
