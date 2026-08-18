@@ -436,6 +436,71 @@ The matching engine is deterministic local computation and is effectively free.
 Essentially the entire budget belongs to the network and the model, which is
 why the levers below all target those two.
 
+### Measured, phase 4
+
+**The budget above is wrong, and the requirement is not currently met.** The
+numbers below were taken once the live reader existed, against the fixture
+corpus, from a residential connection over WSL. They are recorded here in place
+of the estimates rather than alongside them, because an estimate kept next to a
+contradicting measurement is just a nicer number to quote.
+
+Twelve fixtures, sequential, one warm client, first call discarded:
+
+| Statistic | Model call |
+| --- | --- |
+| p50 | 7.4s |
+| p95 | 20.4s |
+| min | 3.0s |
+| max | 20.4s |
+
+Shorter runs on clean fixtures sat lower, p50 around 5.8s, so the honest summary
+is a p50 between 5 and 7 seconds with a very long tail. Against a 5 second
+budget of which the model was allotted 2.5s, the extraction call alone exceeds
+the entire requirement at the median.
+
+**What was ruled out.** Each of these was measured, not reasoned about:
+
+| Hypothesis | Result |
+| --- | --- |
+| Account rate limiting | Ruled out. 499/500 requests and 199,235/200,000 tokens remaining, no `retry-after` header. |
+| Image payload size | Ruled out. Cutting input from 2,457 to 1,133 tokens moved the median by nothing. |
+| The `detail` parameter | Ruled out, and it appears inert. `high`, `low`, and `auto` produced identical input token counts and identical latency. |
+| Output schema size | Real but small. Dropping from 255 output tokens to 9 saved roughly 0.6s, about 2.4ms per token. |
+| Our network round trip | Real but small. A text-only structured call completes in 0.8s from the same machine. |
+
+So the cost is image handling on the provider's side, and its variance rather
+than its floor is what breaks the requirement. The same request measured 3.0s
+and 20.4s within one run.
+
+**What this invalidates.** Lever 2 in the next section claimed client-side
+downscaling was "the largest remaining lever". It is not: it does not move the
+model call at all. It still reduces upload time, which is a real part of the
+user-facing number on a slow connection, so it stays in the build for that
+reason and not the one originally given.
+
+**What is still open.** Every measurement here was taken from a home
+connection. The 0.8s text-only baseline puts a ceiling of about 0.8s on how much
+of this our own network can account for, which is not enough to close a 15s tail,
+but the production path is Render to OpenAI and has not been measured. Phase 1
+deploys it, and until that number exists the correct statement is that the
+requirement is missed by the measurement we have, not that it is unachievable.
+
+Three responses are available and none of them is free:
+
+1. **Report the measured number honestly** and treat the 5 second figure as the
+   target it turned out to be rather than the guarantee it was written as. This
+   is the only option that does not change scope, and ADR-009 has to be revised
+   with it, because a CI gate at p95 under 5 seconds would fail every build.
+2. **Stream the response** so perceived time tracks progress. This does not
+   change the measured number and the definition above is explicit that
+   perception is not what is measured.
+3. **Reduce what is asked for.** The output schema is the only lever with
+   demonstrated effect, and it is worth about 0.6s, so this cannot close the gap
+   on its own.
+
+The decision belongs with the phase 1 measurement rather than ahead of it, and
+this section should be rewritten once that number exists.
+
 ### Acceptance
 
 The evaluation script in section 5.8 records per-label latency across the
@@ -484,10 +549,13 @@ here.
    always-on Render instance, not the free tier. See section 7. This was the
    largest threat to the budget and it is resolved by deployment choice rather
    than by anything in the pipeline.
-2. **Downscale client-side before upload.** The largest remaining lever. Label
-   text is legible at roughly 1200px on the longest edge;
-   uploading a 12MP phone photo spends seconds on transfer and model processing
-   for no accuracy gain.
+2. **Downscale client-side before upload.** Label text is legible at roughly
+   1200px on the longest edge, and a 12MP phone photo spends transfer time for
+   no accuracy gain. This was written as the largest remaining lever and the
+   phase 4 measurement above disproved that: cutting the payload by more than
+   half moved the model call by nothing. It is kept because upload time is a
+   real part of the user-facing number on a slow connection, which is a smaller
+   claim than the one originally made here.
 3. **One model call, never a chain.** Structured output, no multi-step
    reasoning loop.
 4. **Cap output tokens and keep the schema tight.** Extraction returns short

@@ -292,6 +292,14 @@ as binding.
 by gating on p95 rather than max, reporting a per-stage breakdown on failure,
 and never retrying automatically.
 
+**Revisited after phase 4.** The threshold in this decision is not currently
+achievable. Measured warm p95 for the extraction call alone is 20.4 seconds, and
+p50 sits between 5 and 7. A gate written as specified would fail every build,
+including correct ones, which is the precise failure mode this ADR exists to
+avoid. The gate is still built in phase 8 and still blocks on regression, but the
+absolute threshold has to be set from the deployed measurement rather than from
+the figure in the brief. See approach.md section 6, "Measured, phase 4".
+
 ### ADR-010: USWDS through the React wrapper
 
 **Decision.** `@trussworks/react-uswds` layered on `@uswds/uswds`, with USWDS
@@ -306,3 +314,51 @@ non-technical user base.
 **Cost.** Two packages whose versions must stay matched. Importing USWDS JS
 alongside the wrapper causes double initialization, so it is deliberately
 excluded.
+
+### ADR-011: The model observes, the reader converts
+
+**Decision.** The model is asked for a dimensionless cap-height ratio rather
+than a millimetre type size, and is not asked whether the warning prefix is
+capitalized at all. A wire schema in `app/readers/schema.py` holds what is
+actually requested, and the reader maps it onto the `WarningBlock` contract.
+
+**Why.** Both changes come from phase 4 measurement rather than from taste.
+
+Asked for `estimated_type_size_mm`, `gpt-4.1-mini` returned null on a label
+whose type size is known to be 2.2mm. It sees pixels and has no reference
+object in frame, so a millimetre figure is a conversion it cannot ground. A
+ratio is something it can genuinely observe, and the conversion to millimetres
+is arithmetic that belongs in code.
+
+Asked for `prefix_is_caps`, it returned true on a label whose warning it had
+just transcribed correctly in title case, turning a real violation into a clean
+pass. The transcription was faithful and the signal about the transcription was
+not, so the signal is no longer requested. `app.matching.warning` already
+carried a fallback deriving capitalization from the verbatim text, and that
+fallback is now the only path.
+
+This is ADR-001 applied one level down. The split is not merely "the model does
+not decide verdicts"; it is that the model is asked only for things it can
+observe, and everything derivable is derived.
+
+**Cost.** A second set of models to keep in step with the contract, and a
+mapping layer that could drift from it. Bought back by letting the wire schema
+be tuned for the model without the engine, the manifest, or the expected
+verdicts moving at all, which is what made both fixes cheap.
+
+### ADR-012: Extraction failures are not unreadable labels
+
+**Decision.** A timeout, a transport error, a refusal, or a truncated
+generation raises `ExtractionError` and surfaces as HTTP 502. Only the model
+reporting that it cannot read the image produces the `unreadable` outcome, and
+that returns 200.
+
+**Why.** They look similar in a UI and mean opposite things. "Request a better
+photograph" is an instruction to the agent that is actionable and correct when
+the image is genuinely bad, and actively misleading when the provider is down.
+Collapsing the two would send agents chasing photographs during an outage, and
+would hide the outage from the only signal that would reveal it.
+
+**Cost.** Callers must handle a failure path distinct from the result path,
+including in batch, where phase 7 has to keep one failed item from reading as a
+compliance finding.

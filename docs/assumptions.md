@@ -115,11 +115,21 @@ defensible, and phase 8 is where the fixture set gets to argue with them.
 | Bottler address fuzzy tier | 0.70 | Deliberately wide. Addresses vary harmlessly in form far more than brand names do, and approach.md section 5.3 asks for a bias toward review. | Watch for a genuinely different address scoring above 0.70. |
 | Net contents rounding slack | 0.5% relative | Absorbs unit-system rounding only. 750 mL is 25.36 fl oz, and a label printing 25.4 is the same declaration, not a different one. | Confirm no fixture pair inside 0.5% is a real difference. |
 | Proof consistency slack | 0.1 points | Proof is twice ABV by definition. The slack absorbs a label that rounds one of the two figures. | Should need no tuning. |
+| Assumed physical label height | 120 mm | The model reports the warning's cap height as a fraction of image height, and something has to turn that into millimetres. 120mm is the fixture corpus's rendered label height and sits in the normal range for a 750ml front label. Added in phase 4; see ADR-011. | Measured estimates ran high against a known 2.2mm rendering, by 4% to 53% across fixtures. Either the anchor is wrong, the model's ratio is biased, or both. Phase 8 separates them. |
 | Default type size band | 2 mm | Used when container volume cannot be parsed. Covers the standard bottle range, which is the likeliest case. | Rare in practice; the label states net contents. |
 
 The confidence threshold is the one most likely to be wrong. Models are
 routinely overconfident, and a self-reported confidence is a weaker signal than
 its presence in a schema suggests.
+
+**Phase 4 confirmed the suspicion.** `gpt-4.1-mini` returns 0.99 on essentially
+every field it reads, clean or defective, so a gate at 0.75 is inert in practice:
+nothing observed so far falls below it. It is left in place because it costs
+nothing and would catch a genuinely doubtful reading if one ever arrived, but it
+should not be described as an active safeguard. One related quirk was worth
+fixing in the prompt rather than the threshold: asked for a field that is not on
+the label, the model first reported `null` with confidence 0.0, conflating "not
+there" with "no idea". The prompt now names that case explicitly.
 
 ---
 
@@ -211,10 +221,12 @@ corpus side.
 | Gap | Consequence | Status |
 | --- | --- | --- |
 | Every threshold in section 4 is unvalidated | Accuracy claims are not yet evidence | **Open.** Phase 8. The corpus is now the input to that measurement. |
-| Type size in millimetres is estimated from a photograph | Inherently unreliable, which is why it grades soft per ADR-005 | **Now measurable.** Fixtures are rendered at an exact cap height, so phase 4 compares the model's estimate against a known value rather than against an opinion. |
-| Bold detection has the same weakness | Same soft grading | **Now measurable.** Same reason: the prefix is drawn with the bold face or it is not, and `warning-not-bold` and `warning-remainder-bold` cover both halves of 27 CFR 16.22(a). |
+| Type size in millimetres is estimated from a photograph | Inherently unreliable, which is why it grades soft per ADR-005 | **Measured, and open.** The model will not produce millimetres at all, so it reports a cap-height ratio the reader converts (ADR-011). Estimates run high against a known 2.2mm rendering: 2.16, 2.4, 2.88, 3.24, 3.36mm across fixtures. Soft grading contains the damage; the calibration is phase 8. |
+| Bold detection has the same weakness | Same soft grading | **Still measurable, still soft.** Weight is genuinely not recoverable from the transcription the way capitalization is, so unlike `prefix_is_caps` it remains a question for the model. `warning-not-bold` and `warning-remainder-bold` cover both halves of 27 CFR 16.22(a). |
 | CFR values read from a mirror, not eCFR | Small risk of a stale value | **Open.** One manual eCFR pass before submission. |
 | `beverage_class` defaults to distilled spirits | A record that omits it silently gets the 0.3 point band | **Closed.** Every seed record sets it explicitly, and `test_every_record_sets_its_beverage_class_explicitly` fails the build if one stops. |
 | The `St` position rule is a heuristic | `120 St James St` reads the first `St` as Saint, which is right, but a street named only `St James` with no suffix would read as Saint too | **Closed for the covered senses.** `address-saint-and-street` carries `1 St James St, St. Louis, MO` against the spelled-out form and matches. |
 | Directionals expand only in a numbered street line | `North Main St, Louisville` with no house number keeps `N` unexpanded on one side if the other spells it out | **Open, and now pinned.** `address-directional` is exactly this case. The engine returns `needs review` where `match` would be ideal. Recorded rather than fixed, because failing toward a human is defensible; see fixtures.md section 8. |
 | Compound volumes are detected by descending size | A label writing the smaller part first would not be summed | **Covered in the passing direction** by `net-contents-compound` and `net-contents-restated`. A label writing the smaller part first still has no fixture. |
+| Degraded fixtures may not defeat the model | An `unreadable` expectation that the model reads anyway scores as a miss | **Open, and now evidenced.** `unreadable-blur` reports unreadable correctly. `unreadable-glare` and `unreadable-angle` are read anyway, and worse, the model reconstructs the statutory warning from memory on both. See fixtures.md section 5. |
+| Latency exceeds the stated requirement | The 5 second figure is not met by the measurement available | **Open.** Warm p50 5 to 7s, p95 20.4s for the extraction call alone, from a residential connection. Rate limiting, payload size, and the `detail` parameter were each ruled out by measurement. See approach.md section 6. |

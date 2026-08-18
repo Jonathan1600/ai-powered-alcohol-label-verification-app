@@ -154,6 +154,32 @@ The constants at the top of `tools/fixtures/degrade.py` are what gets turned up
 if the model reads them anyway. This is recorded rather than solved because
 guessing at it now would be inventing evidence.
 
+### What phase 4 found
+
+One of the three works. `unreadable-blur` is reported unreadable, with `blur` as
+the reason, and verifies to the `unreadable` status as intended.
+
+`unreadable-glare` and `unreadable-angle` are read anyway, and the way they fail
+is worse than the failure itself. On both, the model returned the *statutory*
+government warning in full, confidently, from a label whose warning is not
+legible in the image. It is reconstructing the text it expects rather than
+transcribing the text it can see.
+
+That is worth separating from the good news next to it, because the same run
+confirmed the model does *not* repair an altered warning it can actually read:
+`warning-altered-wording` and `warning-title-case` both come back transcribed
+faithfully. So the reconstruction is specifically what happens when the pixels
+stop supporting a reading, which is exactly the condition these two fixtures
+exist to create.
+
+The dial is the documented response and turning it up is the obvious next step.
+It is deliberately not done yet, for one reason: the corpus is committed binary
+data and the phase 8 accuracy numbers are taken against it, so regenerating two
+images to make a measurement come out differently is a change that should be made
+deliberately and recorded, not slipped in while fixing something else. What is
+recorded here instead is that two of the three degraded fixtures do not currently
+do their job, and why that matters more than the count suggests.
+
 ---
 
 ## 6. The manifest and what the API serves
@@ -220,6 +246,7 @@ Against the gap table in [assumptions.md](./assumptions.md) section 8:
 | Directionals expand only in a numbered street line | **Open.** See below. |
 | Compound volumes detected by descending size | **Covered in the passing direction** by `net-contents-compound` and `net-contents-restated`. A label writing the smaller part first still has no fixture. |
 | Every threshold unvalidated | **Still phase 8.** The corpus is the input to that measurement, not the measurement. |
+| Degraded fixtures actually defeat the model | **Answered, and only partly well.** Blur works; glare and angle do not. See section 5. |
 
 ### The directional finding
 
