@@ -12,6 +12,7 @@ needs review, then mismatch. Numeric fields skip string comparison entirely.
 from collections.abc import Callable
 from difflib import SequenceMatcher
 
+from app.matching.confidence import apply_confidence
 from app.matching.contracts import (
     ApplicationRecord,
     ExtractedField,
@@ -35,11 +36,6 @@ from app.matching.quantities import (
     parse_volume,
 )
 
-# Below this, an extraction is not trusted enough to clear a field on its own.
-# It only ever downgrades a match; it never rescues a mismatch, because a field
-# read poorly and a field read wrongly both deserve a human look.
-LOW_CONFIDENCE_THRESHOLD = 0.75
-
 # Close enough to be a transcription difference rather than a different product.
 _BRAND_REVIEW_THRESHOLD = 0.85
 _CLASS_TYPE_REVIEW_THRESHOLD = 0.85
@@ -52,21 +48,6 @@ _ADDRESS_REVIEW_THRESHOLD = 0.70
 
 def _similarity(first: str, second: str) -> float:
     return SequenceMatcher(None, first, second).ratio()
-
-
-def _apply_confidence(result: FieldResult, confidence: float) -> FieldResult:
-    """Downgrade a clean match when the extraction itself was uncertain."""
-    if result.verdict is not Verdict.MATCH or confidence >= LOW_CONFIDENCE_THRESHOLD:
-        return result
-    return result.model_copy(
-        update={
-            "verdict": Verdict.NEEDS_REVIEW,
-            "reason": (
-                f"{result.reason} The value was read from the image with low "
-                f"confidence, so it is worth confirming by eye."
-            ),
-        }
-    )
 
 
 def _missing(field: FieldName, claimed: str | None, described: str) -> FieldResult:
@@ -122,7 +103,7 @@ def compare_text(
     actual_normalized = normalizer(actual)
 
     if claimed_normalized == actual_normalized:
-        return _apply_confidence(
+        return apply_confidence(
             FieldResult(
                 field=field,
                 claimed=claimed,
@@ -134,7 +115,7 @@ def compare_text(
         )
 
     if order_insensitive and token_sort(claimed_normalized) == token_sort(actual_normalized):
-        return _apply_confidence(
+        return apply_confidence(
             FieldResult(
                 field=field,
                 claimed=claimed,
@@ -158,7 +139,7 @@ def compare_text(
             extracted=actual,
             verdict=Verdict.NEEDS_REVIEW,
             reason=(
-                f'The {label} is close but not identical: the application says '
+                f"The {label} is close but not identical: the application says "
                 f'"{claimed}" and the label reads "{actual}".'
             ),
         )
@@ -272,7 +253,7 @@ def compare_alcohol_content_field(
     outcome, difference = compare_alcohol_content(claimed, actual, application.beverage_class)
 
     if outcome is Comparison.EQUAL:
-        return _apply_confidence(
+        return apply_confidence(
             build(
                 Verdict.MATCH,
                 f"The alcohol content matches the application at {actual.abv:g}% "
@@ -338,7 +319,7 @@ def compare_net_contents(application: ApplicationRecord, extracted: ExtractedFie
         )
 
     if compare_volume(claimed, actual) is Comparison.EQUAL:
-        return _apply_confidence(
+        return apply_confidence(
             build(
                 Verdict.MATCH,
                 f"The net contents match the application at {actual_text}.",

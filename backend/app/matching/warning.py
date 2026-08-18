@@ -13,6 +13,7 @@ of consequences.
 
 import difflib
 
+from app.matching.confidence import apply_confidence
 from app.matching.contracts import DiffOp, FieldName, FieldResult, Verdict, WarningBlock
 from app.matching.normalize import collapse_whitespace
 from app.matching.quantities import Volume
@@ -105,8 +106,7 @@ def check_government_warning(
     if not block.present or not block.verbatim:
         return _result(
             Verdict.MISMATCH,
-            "The health warning statement required by 27 CFR 16.21 does not "
-            "appear on the label.",
+            "The health warning statement required by 27 CFR 16.21 does not appear on the label.",
             None,
         )
 
@@ -119,8 +119,7 @@ def check_government_warning(
     if actual.casefold() != expected.casefold():
         return _result(
             Verdict.MISMATCH,
-            "The warning wording does not match the statutory text in "
-            "27 CFR 16.21.",
+            "The warning wording does not match the statutory text in 27 CFR 16.21.",
             actual,
             diff=word_diff(expected, actual),
         )
@@ -129,8 +128,7 @@ def check_government_warning(
     if prefix_capitalized is False:
         return _result(
             Verdict.MISMATCH,
-            'The words "GOVERNMENT WARNING:" must appear in capital letters '
-            "(27 CFR 16.22(a)).",
+            'The words "GOVERNMENT WARNING:" must appear in capital letters (27 CFR 16.22(a)).',
             actual,
         )
 
@@ -171,9 +169,14 @@ def check_government_warning(
             actual,
         )
 
-    return _result(
-        Verdict.MATCH,
-        "The warning matches the statutory text and meets the capitalization, "
-        "weight, and type size requirements.",
-        actual,
+    # A warning transcribed with low confidence gets the same treatment as any
+    # other field, rather than clearing on the strength of a doubtful reading.
+    return apply_confidence(
+        _result(
+            Verdict.MATCH,
+            "The warning matches the statutory text and meets the capitalization, "
+            "weight, and type size requirements.",
+            actual,
+        ),
+        block.confidence,
     )

@@ -108,6 +108,20 @@ class TestSoftFailures:
         assert "could not be assessed" in result.reason
 
 
+class TestConfidenceGating:
+    """The warning gets the same confidence gate as every other field."""
+
+    def test_low_confidence_downgrades_a_matching_warning(self):
+        result = check_government_warning(compliant_warning(confidence=0.1))
+        assert result.verdict is Verdict.NEEDS_REVIEW
+        assert "low confidence" in result.reason
+
+    def test_low_confidence_never_rescues_altered_wording(self):
+        altered = CANONICAL_WARNING.replace("birth defects", "certain birth defects")
+        result = check_government_warning(compliant_warning(verbatim=altered, confidence=0.1))
+        assert result.verdict is Verdict.MISMATCH
+
+
 class TestTypeSizeThresholds:
     """27 CFR 16.22(b), keyed to container volume."""
 
