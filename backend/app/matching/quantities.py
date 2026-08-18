@@ -83,6 +83,10 @@ _VOLUME = re.compile(
     re.IGNORECASE,
 )
 
+# A parenthesized quantity restates the declaration in a second unit, as in
+# `750 mL (25.4 fl oz)`. It is the same volume said twice, never an addition.
+_PARENTHETICAL = re.compile(r"\([^)]*\)")
+
 
 class Comparison(str, Enum):
     """What the numbers say, before anything decides what it means."""
@@ -146,19 +150,44 @@ def parse_alcohol_content(text: str | None) -> AlcoholContent | None:
     return None
 
 
+def _volume_parts(text: str) -> list[tuple[float, str, str]]:
+    """Every quantity and unit in the text, converted to millilitres."""
+    parts = []
+    for match in _VOLUME.finditer(text):
+        unit_key = re.sub(r"[\s.]", "", match.group(2)).lower()
+        factor = _VOLUME_UNITS.get(unit_key)
+        if factor is None:
+            continue
+        parts.append((float(match.group(1)) * factor, match.group(2).strip(), unit_key))
+    return parts
+
+
 def parse_volume(text: str | None) -> Volume | None:
-    """Pull a quantity and unit out of a net contents statement."""
+    """Pull a net contents declaration out of free-form text.
+
+    US labels write a compound declaration as `1 PINT 8 FL. OZ.`, which is one
+    volume in two units and has to be summed. That form is told apart from a
+    restatement by shape: the parts of a compound descend in size and never
+    repeat a unit, so `750 mL 25.4 fl oz` stops after the first part while
+    `1 PINT 8 FL OZ` adds them.
+    """
     if not text:
         return None
-    match = _VOLUME.search(text)
-    if not match:
+
+    parts = _volume_parts(_PARENTHETICAL.sub(" ", text)) or _volume_parts(text)
+    if not parts:
         return None
-    quantity = float(match.group(1))
-    unit_key = re.sub(r"[\s.]", "", match.group(2)).lower()
-    factor = _VOLUME_UNITS.get(unit_key)
-    if factor is None:
-        return None
-    return Volume(milliliters=quantity * factor, original_unit=match.group(2).strip())
+
+    total, original_unit, previous_key = parts[0]
+    previous_milliliters = total
+    for milliliters, _unit, unit_key in parts[1:]:
+        if milliliters >= previous_milliliters or unit_key == previous_key:
+            break
+        total += milliliters
+        previous_milliliters = milliliters
+        previous_key = unit_key
+
+    return Volume(milliliters=total, original_unit=original_unit)
 
 
 def abv_tolerance(beverage_class: BeverageClass, abv: float) -> float:

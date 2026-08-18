@@ -70,7 +70,6 @@ class TestClassType:
             Verdict.MATCH
         )
 
-
 class TestAlcoholContent:
     def test_abv_mismatch_beyond_tolerance_is_a_problem(self, application, extraction):
         extraction.alcohol_content = field("40% Alc./Vol. (80 Proof)")
@@ -113,6 +112,14 @@ class TestNetContents:
             Verdict.MISMATCH
         )
 
+    def test_compound_us_declaration_passes(self, application, extraction):
+        """`1 PINT 8 FL. OZ.` is 709 mL, not the 473 mL of its first part."""
+        application.net_contents = "709 mL"
+        extraction.net_contents = field("1 PINT 8 FL. OZ.")
+        assert result_for(verify(application, extraction), FieldName.NET_CONTENTS).verdict is (
+            Verdict.MATCH
+        )
+
 
 class TestBottlerInfo:
     def test_address_abbreviation_difference_passes(self, application, extraction):
@@ -152,9 +159,10 @@ class TestCountryOfOrigin:
         application.is_import = True
         application.country_of_origin = "Product of Scotland"
         extraction.country_of_origin = field("PRODUCT OF SCOTLAND")
-        assert result_for(
-            verify(application, extraction), FieldName.COUNTRY_OF_ORIGIN
-        ).verdict is Verdict.MATCH
+        assert (
+            result_for(verify(application, extraction), FieldName.COUNTRY_OF_ORIGIN).verdict
+            is Verdict.MATCH
+        )
 
 
 class TestGovernmentWarningThroughTheEngine:
@@ -169,9 +177,10 @@ class TestGovernmentWarningThroughTheEngine:
         application.net_contents = "50 mL"
         extraction.net_contents = field("50 mL")
         extraction.government_warning = compliant_warning(estimated_type_size_mm=1.0)
-        assert result_for(
-            verify(application, extraction), FieldName.GOVERNMENT_WARNING
-        ).verdict is Verdict.MATCH
+        assert (
+            result_for(verify(application, extraction), FieldName.GOVERNMENT_WARNING).verdict
+            is Verdict.MATCH
+        )
 
 
 class TestConfidenceGating:

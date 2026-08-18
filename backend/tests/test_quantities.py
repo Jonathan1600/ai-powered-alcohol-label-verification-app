@@ -79,6 +79,22 @@ class TestParseVolume:
     def test_fluid_ounces_convert(self):
         assert parse_volume("12 FL OZ").milliliters == pytest.approx(354.88, abs=0.01)
 
+    def test_a_compound_declaration_is_summed(self):
+        """US labels write 709 mL as `1 PINT 8 FL. OZ.`, which is one volume."""
+        assert parse_volume("1 PINT 8 FL. OZ.").milliliters == pytest.approx(709.76, abs=0.01)
+
+    def test_a_parenthetical_restatement_is_not_added(self):
+        """`750 mL (25.4 fl oz)` is one volume said twice, not 1.5 litres."""
+        assert parse_volume("750 mL (25.4 fl oz)").milliliters == pytest.approx(750.0)
+        assert parse_volume("12 fl oz (355 mL)").milliliters == pytest.approx(354.88, abs=0.01)
+
+    def test_an_unparenthesized_restatement_is_not_added(self):
+        """Parts of a compound descend in size; a restatement does not."""
+        assert parse_volume("750 mL 25.4 fl oz").milliliters == pytest.approx(750.0)
+
+    def test_a_lone_parenthesized_quantity_still_parses(self):
+        assert parse_volume("Net contents (750 mL)").milliliters == pytest.approx(750.0)
+
     def test_unparseable_returns_none(self):
         assert parse_volume("one bottle") is None
         assert parse_volume(None) is None
