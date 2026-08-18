@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import REPO_ROOT, Settings
+from app.seed.routes import mount_fixture_files
+from app.seed.routes import router as seed_router
 
 # Export OPENAI_API_KEY (and anything else in .env) into the process
 # environment so the OpenAI SDK picks it up under its default variable name.
@@ -19,6 +21,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+app.include_router(seed_router)
+mount_fixture_files(app)
 
 
 @app.get("/api/health")

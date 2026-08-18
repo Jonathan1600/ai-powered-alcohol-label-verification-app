@@ -1,0 +1,4129 @@
+{
+  "version": 1,
+  "generator": "tools/generate_fixtures.py",
+  "count": 44,
+  "items": [
+    {
+      "id": "case-variance",
+      "application_reference": "TTB-2026-0001",
+      "brand_name": "Stone's Throw",
+      "probes": "The named requirement: all-caps plus a curly apostrophe must not fail. Every field differs in case and none of it means anything.",
+      "degradation": "none",
+      "image": "images/case-variance.png",
+      "thumbnail": "thumbnails/case-variance.jpg",
+      "application": {
+        "brand_name": "Stone's Throw",
+        "class_type": "Kentucky Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Stone's Throw Distillery, 120 Main St, Bardstown, KY",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "STONE\u2019S THROW",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "KENTUCKY STRAIGHT BOURBON WHISKEY",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% ALC./VOL. (90 PROOF)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 ML",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "BOTTLED BY STONE\u2019S THROW DISTILLERY, 120 MAIN STREET, BARDSTOWN, KY",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "brand-fuzzy-review",
+      "application_reference": "TTB-2026-0002",
+      "brand_name": "Ridgeline Reserve",
+      "probes": "A one-character transcription slip, which is the fuzzy tier's whole purpose.",
+      "degradation": "none",
+      "image": "images/brand-fuzzy-review.png",
+      "thumbnail": "thumbnails/brand-fuzzy-review.jpg",
+      "application": {
+        "brand_name": "Ridgeline Reserve",
+        "class_type": "Straight Bourbon Whiskey",
+        "alcohol_content": "46% Alc./Vol. (92 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Ridgeline Distilling Co, 60 Ledge Rd, Asheville, NC",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Ridgeline Resrve",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Straight Bourbon Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "46% Alc./Vol. (92 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Ridgeline Distilling Co, 60 Ledge Rd, Asheville, NC",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "needs_review",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "needs_review",
+            "note": "Close but not identical. A dropped letter is far more likely to be a transcription slip than a different product, so it goes to an agent rather than being called a violation."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "abv-mismatch-spirits",
+      "application_reference": "TTB-2026-0003",
+      "brand_name": "Kilnwright",
+      "probes": "5 points apart on a 0.3 point band. 27 CFR 5.65(a)(2).",
+      "degradation": "none",
+      "image": "images/abv-mismatch-spirits.png",
+      "thumbnail": "thumbnails/abv-mismatch-spirits.jpg",
+      "application": {
+        "brand_name": "Kilnwright",
+        "class_type": "Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Kilnwright Distillery, 14 Cooperage St, Louisville, KY",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Kilnwright",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Straight Bourbon Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "40% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Kilnwright Distillery, 14 Cooperage St, Louisville, KY",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "mismatch",
+            "note": "45% claimed against 40% printed. No reading of the 0.3 point spirits tolerance forgives a 5 point gap."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "abv-within-band-wine",
+      "application_reference": "TTB-2026-0004",
+      "brand_name": "Hollowmere",
+      "probes": "The central interpretation in assumptions.md section 3: inside the band is a review, not a pass and not a violation.",
+      "degradation": "none",
+      "image": "images/abv-within-band-wine.png",
+      "thumbnail": "thumbnails/abv-within-band-wine.jpg",
+      "application": {
+        "brand_name": "Hollowmere",
+        "class_type": "Sauvignon Blanc",
+        "alcohol_content": "12.5% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Hollowmere Vineyards, 5 Bench Rd, Sonoma, CA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Hollowmere",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Sauvignon Blanc",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "13% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Hollowmere Vineyards, 5 Bench Rd, Sonoma, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "needs_review",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "needs_review",
+            "note": "0.5 points apart, inside the 1.5 point band for wine at or below 14%. The label would still be lawful for this product, but the two documents disagree and only exact agreement passes clean."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "abv-wine-tax-boundary",
+      "application_reference": "TTB-2026-0005",
+      "brand_name": "Ashgrove Bend",
+      "probes": "0.2 points apart inside a 1.5 point band, and still a hard mismatch because the values fall in different tax classes. 27 CFR 4.36(b)(2).",
+      "degradation": "none",
+      "image": "images/abv-wine-tax-boundary.png",
+      "thumbnail": "thumbnails/abv-wine-tax-boundary.jpg",
+      "application": {
+        "brand_name": "Ashgrove Bend",
+        "class_type": "Zinfandel",
+        "alcohol_content": "13.9% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Ashgrove Bend Winery, 700 Dry Creek Rd, Healdsburg, CA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Ashgrove Bend",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Zinfandel",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "14.1% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Ashgrove Bend Winery, 700 Dry Creek Rd, Healdsburg, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "mismatch",
+            "note": "13.9% against 14.1%. The gap is small and the tolerance is wide, but the 14% threshold separates two taxable grades and no tolerance bridges it."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "proof-contradiction",
+      "application_reference": "TTB-2026-0006",
+      "brand_name": "Ferrier's Mark",
+      "probes": "The label disagrees with itself, so it is a defect before the application is consulted at all.",
+      "degradation": "none",
+      "image": "images/proof-contradiction.png",
+      "thumbnail": "thumbnails/proof-contradiction.jpg",
+      "application": {
+        "brand_name": "Ferrier's Mark",
+        "class_type": "Straight Rye Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Ferrier's Mark Distillery, 3 Anvil Ct, Nashville, TN",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Ferrier's Mark",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Straight Rye Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Ferrier's Mark Distillery, 3 Anvil Ct, Nashville, TN",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "mismatch",
+            "note": "The label states 45% alcohol by volume and 80 proof. Proof is twice alcohol by volume by definition, so 45% is 90 proof and the label contradicts itself. It happens to agree with the application on the percentage, which is why this must be caught on the label alone."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "net-contents-compound",
+      "application_reference": "TTB-2026-0007",
+      "brand_name": "Marlowe Cask",
+      "probes": "A compound US declaration: two units naming one volume, which must be summed. Reading only the first part turned this into a 33% mismatch before the phase 2 review fixed it.",
+      "degradation": "none",
+      "image": "images/net-contents-compound.png",
+      "thumbnail": "thumbnails/net-contents-compound.jpg",
+      "application": {
+        "brand_name": "Marlowe Cask",
+        "class_type": "Blended Whiskey",
+        "alcohol_content": "40% Alc./Vol. (80 Proof)",
+        "net_contents": "709 mL",
+        "bottler_info": "Bottled by Marlowe Cask Works, 18 Stave Rd, Peoria, IL",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Marlowe Cask",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Blended Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "40% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "1 PINT 8 FL. OZ.",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Marlowe Cask Works, 18 Stave Rd, Peoria, IL",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "1 pint plus 8 fluid ounces is 709.76 mL, which is the same declaration as 709 mL once rounding is allowed for."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "net-contents-restated",
+      "application_reference": "TTB-2026-0008",
+      "brand_name": "Quarry Light",
+      "probes": "The opposite shape: one volume named twice. A parenthesized quantity restates, it never adds.",
+      "degradation": "none",
+      "image": "images/net-contents-restated.png",
+      "thumbnail": "thumbnails/net-contents-restated.jpg",
+      "application": {
+        "brand_name": "Quarry Light",
+        "class_type": "Vodka Distilled from Grain",
+        "alcohol_content": "40% Alc./Vol. (80 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Quarry Light Spirits, 250 Granite Ave, Barre, VT",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Quarry Light",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Vodka Distilled from Grain",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "40% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL (25.4 fl oz)",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Quarry Light Spirits, 250 Granite Ave, Barre, VT",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "750 mL and 25.4 fl oz are the same volume written twice. Summing them would invent a 1509 mL bottle."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "net-contents-mismatch",
+      "application_reference": "TTB-2026-0009",
+      "brand_name": "Selwyn Row",
+      "probes": "A genuinely different fill, well outside the 0.5% rounding slack.",
+      "degradation": "none",
+      "image": "images/net-contents-mismatch.png",
+      "thumbnail": "thumbnails/net-contents-mismatch.jpg",
+      "application": {
+        "brand_name": "Selwyn Row",
+        "class_type": "London Dry Gin",
+        "alcohol_content": "42% Alc./Vol. (84 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Selwyn Row Distillers, 31 Botanic Ln, Charleston, SC",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Selwyn Row",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "London Dry Gin",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "42% Alc./Vol. (84 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "700 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Selwyn Row Distillers, 31 Botanic Ln, Charleston, SC",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "mismatch",
+            "note": "750 mL claimed against 700 mL printed. That is a 6.7% difference, far outside the rounding slack, so it is a different declaration rather than a different way of writing the same one."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "address-saint-and-street",
+      "application_reference": "TTB-2026-0010",
+      "brand_name": "Coopers Bend",
+      "probes": "Both senses of St in one address. The first abbreviates Saint and the second abbreviates Street, and only position tells them apart.",
+      "degradation": "none",
+      "image": "images/address-saint-and-street.png",
+      "thumbnail": "thumbnails/address-saint-and-street.jpg",
+      "application": {
+        "brand_name": "Coopers Bend",
+        "class_type": "Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Coopers Bend Distillery, 1 St James St, St. Louis, MO",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Coopers Bend",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Straight Bourbon Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% Alc./Vol. (90 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "BOTTLED BY COOPERS BEND DISTILLERY, 1 SAINT JAMES STREET, SAINT LOUIS, MO",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label spells out what the application abbreviates. Both sides resolve to the same address once St is read as Saint before a name and Street at the end of a line."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "address-directional",
+      "application_reference": "TTB-2026-0011",
+      "brand_name": "Fox Hollow",
+      "probes": "A directional abbreviation on a street line carrying no house number. assumptions.md section 8 records this as a known limit of the positional rule.",
+      "degradation": "none",
+      "image": "images/address-directional.png",
+      "thumbnail": "thumbnails/address-directional.jpg",
+      "application": {
+        "brand_name": "Fox Hollow",
+        "class_type": "Pinot Noir",
+        "alcohol_content": "13.5% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Fox Hollow Cellars, North Main St, Napa, CA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Fox Hollow",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Pinot Noir",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "13.5% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "PRODUCED AND BOTTLED BY FOX HOLLOW CELLARS, N MAIN ST, NAPA, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "needs_review",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "needs_review",
+            "note": "The ideal verdict is match: N Main St and North Main St are the same street. The engine cannot reach it, because a directional only expands inside a segment that starts with a house number and this one does not. Landing on needs review is the safe direction to fail, and it is the outcome this fixture pins until the rule improves."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "import-missing-country",
+      "application_reference": "TTB-2026-0012",
+      "brand_name": "Ardmore Quay",
+      "probes": "A conditional field: required because the application declares an import.",
+      "degradation": "none",
+      "image": "images/import-missing-country.png",
+      "thumbnail": "thumbnails/import-missing-country.jpg",
+      "application": {
+        "brand_name": "Ardmore Quay",
+        "class_type": "Irish Whiskey",
+        "alcohol_content": "40% Alc./Vol. (80 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Imported by Ardmore Quay Selections, 90 Harbor St, Portland, ME",
+        "country_of_origin": "Ireland",
+        "beverage_class": "distilled_spirits",
+        "is_import": true
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Ardmore Quay",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Irish Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "40% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Imported by Ardmore Quay Selections, 90 Harbor St, Portland, ME",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "country_of_origin",
+            "verdict": "mismatch",
+            "note": "The application declares an import, so the label must state a country of origin, and it states none."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "warning-missing",
+      "application_reference": "TTB-2026-0013",
+      "brand_name": "Pellham Grove",
+      "probes": "No health warning at all. The most fundamental failure of 27 CFR 16.21.",
+      "degradation": "none",
+      "image": "images/warning-missing.png",
+      "thumbnail": "thumbnails/warning-missing.jpg",
+      "application": {
+        "brand_name": "Pellham Grove",
+        "class_type": "Merlot",
+        "alcohol_content": "13% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Pellham Grove Winery, 12 Trellis Rd, Napa, CA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Pellham Grove",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Merlot",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "13% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Pellham Grove Winery, 12 Trellis Rd, Napa, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": false,
+          "verbatim": null,
+          "prefix_is_caps": null,
+          "prefix_is_bold": null,
+          "remainder_is_bold": null,
+          "estimated_type_size_mm": null,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "mismatch",
+            "note": "The statement required by 27 CFR 16.21 does not appear."
+          }
+        ]
+      }
+    },
+    {
+      "id": "warning-title-case",
+      "application_reference": "TTB-2026-0014",
+      "brand_name": "Tallow Creek",
+      "probes": "Correct wording, wrong capitalization. This must report as one capitalization failure, not as a dozen wording changes.",
+      "degradation": "none",
+      "image": "images/warning-title-case.png",
+      "thumbnail": "thumbnails/warning-title-case.jpg",
+      "application": {
+        "brand_name": "Tallow Creek",
+        "class_type": "Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Tallow Creek Distillery, 6 Char House Rd, Owensboro, KY",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Tallow Creek",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Straight Bourbon Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% Alc./Vol. (90 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Tallow Creek Distillery, 6 Char House Rd, Owensboro, KY",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "Government Warning: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": false,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "mismatch",
+            "note": "The words GOVERNMENT WARNING: must be in capitals (27 CFR 16.22(a)). The wording itself is correct, which is why wording is compared case-insensitively and capitalization is judged separately straight afterwards."
+          }
+        ]
+      }
+    },
+    {
+      "id": "warning-altered-wording",
+      "application_reference": "TTB-2026-0015",
+      "brand_name": "Weathervane",
+      "probes": "One verb changed. Exercises the word-level diff the review view renders.",
+      "degradation": "none",
+      "image": "images/warning-altered-wording.png",
+      "thumbnail": "thumbnails/warning-altered-wording.jpg",
+      "application": {
+        "brand_name": "Weathervane",
+        "class_type": "American Single Malt Whiskey",
+        "alcohol_content": "46% Alc./Vol. (92 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Weathervane Distilling, 21 Kiln St, Portland, ME",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Weathervane",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "American Single Malt Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "46% Alc./Vol. (92 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Weathervane Distilling, 21 Kiln St, Portland, ME",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and can cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "mismatch",
+            "note": "The statute says may cause health problems and the label says can. The text is fixed by 27 CFR 16.21, so any wording difference is a real violation however small it reads."
+          }
+        ]
+      }
+    },
+    {
+      "id": "warning-not-bold",
+      "application_reference": "TTB-2026-0016",
+      "brand_name": "Hearthstone Row",
+      "probes": "Bold graded softly per ADR-005. Font weight cannot be judged reliably from a photograph, so this is a review and not a failure.",
+      "degradation": "none",
+      "image": "images/warning-not-bold.png",
+      "thumbnail": "thumbnails/warning-not-bold.jpg",
+      "application": {
+        "brand_name": "Hearthstone Row",
+        "class_type": "Amber Ale",
+        "alcohol_content": "5.6% Alc./Vol.",
+        "net_contents": "355 mL",
+        "bottler_info": "Brewed and bottled by Hearthstone Row Brewing, 8 Malt Ln, Madison, WI",
+        "country_of_origin": null,
+        "beverage_class": "malt_beverage",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Hearthstone Row",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Amber Ale",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "5.6% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "355 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Brewed and bottled by Hearthstone Row Brewing, 8 Malt Ln, Madison, WI",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": false,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "needs_review",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "needs_review",
+            "note": "The opening words must be bold (27 CFR 16.22(a)) and they do not appear to be. A false hard failure on a compliant label costs more trust than it saves, so this asks the agent to check the physical label."
+          }
+        ]
+      }
+    },
+    {
+      "id": "warning-remainder-bold",
+      "application_reference": "TTB-2026-0017",
+      "brand_name": "Windlass Bay",
+      "probes": "The other half of the bold rule. The remainder must not be bold, which is why the contract carries two weight flags and not one.",
+      "degradation": "none",
+      "image": "images/warning-remainder-bold.png",
+      "thumbnail": "thumbnails/warning-remainder-bold.jpg",
+      "application": {
+        "brand_name": "Windlass Bay",
+        "class_type": "Dry Cider Style Malt Beverage",
+        "alcohol_content": "6% Alc./Vol.",
+        "net_contents": "500 mL",
+        "bottler_info": "Brewed and bottled by Windlass Bay Beverage Co, 2 Quay St, Newport, RI",
+        "country_of_origin": null,
+        "beverage_class": "malt_beverage",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Windlass Bay",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Dry Cider Style Malt Beverage",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "6% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "500 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Brewed and bottled by Windlass Bay Beverage Co, 2 Quay St, Newport, RI",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": true,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "needs_review",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "needs_review",
+            "note": "The whole block is bold. Only the opening words may be (27 CFR 16.22(a)). Graded softly for the same reason as the prefix weight."
+          }
+        ]
+      }
+    },
+    {
+      "id": "warning-undersized",
+      "application_reference": "TTB-2026-0018",
+      "brand_name": "Kestrel Fields",
+      "probes": "Type size is keyed to the container, not the label. 1mm is fully compliant on the 50 mL miniature in this same corpus.",
+      "degradation": "none",
+      "image": "images/warning-undersized.png",
+      "thumbnail": "thumbnails/warning-undersized.jpg",
+      "application": {
+        "brand_name": "Kestrel Fields",
+        "class_type": "Chardonnay",
+        "alcohol_content": "13% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Kestrel Fields Winery, 40 Vine Rd, Walla Walla, WA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Kestrel Fields",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Chardonnay",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "13% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Kestrel Fields Winery, 40 Vine Rd, Walla Walla, WA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 1.0,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "needs_review",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "needs_review",
+            "note": "Rendered at 1mm on a 750 mL bottle, which requires 2mm (27 CFR 16.22(b)). A millimetre estimated from a photograph is not evidence enough to fail a label, so the agent is asked to measure."
+          }
+        ]
+      }
+    },
+    {
+      "id": "brand-name-mismatch",
+      "application_reference": "TTB-2026-0019",
+      "brand_name": "Kingfisher Bay",
+      "probes": "A brand extension is a different product, not a transcription slip. Only the brand differs, so the fuzzy threshold is what is on trial.",
+      "degradation": "none",
+      "image": "images/brand-name-mismatch.png",
+      "thumbnail": "thumbnails/brand-name-mismatch.jpg",
+      "application": {
+        "brand_name": "Kingfisher Bay",
+        "class_type": "Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Kingfisher Bay Distillery, 9 Estuary Rd, Mobile, AL",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Kingfisher Bay Reserve Cask",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Straight Bourbon Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% Alc./Vol. (90 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Kingfisher Bay Distillery, 9 Estuary Rd, Mobile, AL",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "mismatch",
+            "note": "The application covers Kingfisher Bay and the label reads Kingfisher Bay Reserve Cask. That is a different product designation, not a different spelling of the same one, so it falls through the fuzzy tier rather than resting in it."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "class-type-mismatch",
+      "application_reference": "TTB-2026-0020",
+      "brand_name": "Millrace Reserve",
+      "probes": "A misdeclared class. Blended whiskey approved as straight bourbon is a substantive labeling violation, not a wording preference.",
+      "degradation": "none",
+      "image": "images/class-type-mismatch.png",
+      "thumbnail": "thumbnails/class-type-mismatch.jpg",
+      "application": {
+        "brand_name": "Millrace Reserve",
+        "class_type": "Kentucky Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Millrace Distilling Co, 27 Weir St, Lexington, KY",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Millrace Reserve",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Blended Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% Alc./Vol. (90 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Millrace Distilling Co, 27 Weir St, Lexington, KY",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "mismatch",
+            "note": "Straight bourbon claimed, blended whiskey printed. The synonym table folds whisky and whiskey precisely so that it does not fold designations that name genuinely different products."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bottler-address-mismatch",
+      "application_reference": "TTB-2026-0021",
+      "brand_name": "Yarrow Flats",
+      "probes": "The 0.70 address threshold is deliberately wide. This checks it is not so wide that an entirely different bottler scores through it.",
+      "degradation": "none",
+      "image": "images/bottler-address-mismatch.png",
+      "thumbnail": "thumbnails/bottler-address-mismatch.jpg",
+      "application": {
+        "brand_name": "Yarrow Flats",
+        "class_type": "Straight Rye Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Yarrow Flats Distillery, 9 Estuary Rd, Mobile, AL",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Yarrow Flats",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Straight Rye Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% Alc./Vol. (90 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "BOTTLED BY GRANITE FALLS BEVERAGE, 4100 INDUSTRIAL PKWY, TOPEKA, KS",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "problem_found",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "mismatch",
+            "note": "A different company at a different address in a different state. Nothing about this is a formatting variation."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "unreadable-glare",
+      "application_reference": "TTB-2026-0022",
+      "brand_name": "Saltmarsh Lane",
+      "probes": "Specular glare across the label face. No field verdicts at all.",
+      "degradation": "glare",
+      "image": "images/unreadable-glare.png",
+      "thumbnail": "thumbnails/unreadable-glare.jpg",
+      "application": {
+        "brand_name": "Saltmarsh Lane",
+        "class_type": "Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Saltmarsh Lane Distillery, 15 Tide Rd, Savannah, GA",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": true,
+          "reason": "glare",
+          "notes": "Specular glare across the label face. No field verdicts at all."
+        },
+        "brand_name": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": false,
+          "verbatim": null,
+          "prefix_is_caps": null,
+          "prefix_is_bold": null,
+          "remainder_is_bold": null,
+          "estimated_type_size_mm": null,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "unreadable",
+        "unreadable_reason": "glare",
+        "fields": []
+      }
+    },
+    {
+      "id": "unreadable-blur",
+      "application_reference": "TTB-2026-0023",
+      "brand_name": "Perch Point",
+      "probes": "Out of focus. The correct answer is to ask for a better photo.",
+      "degradation": "blur",
+      "image": "images/unreadable-blur.png",
+      "thumbnail": "thumbnails/unreadable-blur.jpg",
+      "application": {
+        "brand_name": "Perch Point",
+        "class_type": "Riesling",
+        "alcohol_content": "11.5% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Perch Point Cellars, 3 Lake Rd, Geneva, NY",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": true,
+          "reason": "blur",
+          "notes": "Out of focus. The correct answer is to ask for a better photo."
+        },
+        "brand_name": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": false,
+          "verbatim": null,
+          "prefix_is_caps": null,
+          "prefix_is_bold": null,
+          "remainder_is_bold": null,
+          "estimated_type_size_mm": null,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "unreadable",
+        "unreadable_reason": "blur",
+        "fields": []
+      }
+    },
+    {
+      "id": "unreadable-angle",
+      "application_reference": "TTB-2026-0024",
+      "brand_name": "Drover's Rest",
+      "probes": "Photographed at a severe oblique angle.",
+      "degradation": "angle",
+      "image": "images/unreadable-angle.png",
+      "thumbnail": "thumbnails/unreadable-angle.jpg",
+      "application": {
+        "brand_name": "Drover's Rest",
+        "class_type": "Scotch Whiskey",
+        "alcohol_content": "43% Alc./Vol. (86 Proof)",
+        "net_contents": "700 mL",
+        "bottler_info": "Imported by Drover's Rest Selections, 4 Kirk St, Chicago, IL",
+        "country_of_origin": "Scotland",
+        "beverage_class": "distilled_spirits",
+        "is_import": true
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": true,
+          "reason": "angle",
+          "notes": "Photographed at a severe oblique angle."
+        },
+        "brand_name": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": false,
+          "verbatim": null,
+          "prefix_is_caps": null,
+          "prefix_is_bold": null,
+          "remainder_is_bold": null,
+          "estimated_type_size_mm": null,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "unreadable",
+        "unreadable_reason": "angle",
+        "fields": []
+      }
+    },
+    {
+      "id": "clean-bourbon-750",
+      "application_reference": "TTB-2026-0101",
+      "brand_name": "Copper Kettle",
+      "probes": "A straightforward passing label.",
+      "degradation": "none",
+      "image": "images/clean-bourbon-750.png",
+      "thumbnail": "thumbnails/clean-bourbon-750.jpg",
+      "application": {
+        "brand_name": "Copper Kettle",
+        "class_type": "Kentucky Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Copper Kettle Distillery, 480 Rickhouse Rd, Bardstown, KY",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Copper Kettle",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Kentucky Straight Bourbon Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% Alc./Vol. (90 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Copper Kettle Distillery, 480 Rickhouse Rd, Bardstown, KY",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-rye-750",
+      "application_reference": "TTB-2026-0102",
+      "brand_name": "Harrow Lane",
+      "probes": "A straightforward passing label.",
+      "degradation": "photo",
+      "image": "images/clean-rye-750.png",
+      "thumbnail": "thumbnails/clean-rye-750.jpg",
+      "application": {
+        "brand_name": "Harrow Lane",
+        "class_type": "Straight Rye Whiskey",
+        "alcohol_content": "47.5% Alc./Vol. (95 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Distilled and bottled by Harrow Lane Spirits, 12 Mill Race Ave, Frankfort, KY",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Harrow Lane",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Straight Rye Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "47.5% Alc./Vol. (95 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Distilled and bottled by Harrow Lane Spirits, 12 Mill Race Ave, Frankfort, KY",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-vodka-1750",
+      "application_reference": "TTB-2026-0103",
+      "brand_name": "Tidewater",
+      "probes": "A 1.75 L bottle, the top of the 2mm type-size band.",
+      "degradation": "none",
+      "image": "images/clean-vodka-1750.png",
+      "thumbnail": "thumbnails/clean-vodka-1750.jpg",
+      "application": {
+        "brand_name": "Tidewater",
+        "class_type": "Vodka Distilled from Grain",
+        "alcohol_content": "40% Alc./Vol. (80 Proof)",
+        "net_contents": "1.75 L",
+        "bottler_info": "Bottled by Tidewater Distilling Co, 900 Harbor Blvd, Norfolk, VA",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Tidewater",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Vodka Distilled from Grain",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "40% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "1.75 L",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Tidewater Distilling Co, 900 Harbor Blvd, Norfolk, VA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-gin-750",
+      "application_reference": "TTB-2026-0104",
+      "brand_name": "Fernhollow",
+      "probes": "A suite number in the address, expanded by the unit-form table.",
+      "degradation": "photo",
+      "image": "images/clean-gin-750.png",
+      "thumbnail": "thumbnails/clean-gin-750.jpg",
+      "application": {
+        "brand_name": "Fernhollow",
+        "class_type": "London Dry Gin",
+        "alcohol_content": "44% Alc./Vol. (88 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Bottled by Fernhollow Botanical Works, 7 Juniper Ct, Ste 2, Portland, OR",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Fernhollow",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "London Dry Gin",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "44% Alc./Vol. (88 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Fernhollow Botanical Works, 7 Juniper Ct, Ste 2, Portland, OR",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-scotch-import",
+      "application_reference": "TTB-2026-0105",
+      "brand_name": "Glen Marrow",
+      "probes": "The whisky and whiskey spelling fold. Scots producers drop the e.",
+      "degradation": "none",
+      "image": "images/clean-scotch-import.png",
+      "thumbnail": "thumbnails/clean-scotch-import.jpg",
+      "application": {
+        "brand_name": "Glen Marrow",
+        "class_type": "Single Malt Scotch Whiskey",
+        "alcohol_content": "43% Alc./Vol. (86 Proof)",
+        "net_contents": "700 mL",
+        "bottler_info": "Imported by Northgate Selections Inc, 55 Dock St, Boston, MA",
+        "country_of_origin": "Scotland",
+        "beverage_class": "distilled_spirits",
+        "is_import": true
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Glen Marrow",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Single Malt Scotch Whisky",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "43% Alc./Vol. (86 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "700 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Imported by Northgate Selections Inc, 55 Dock St, Boston, MA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": "Scotland",
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "country_of_origin",
+            "verdict": "match",
+            "note": "An import, and the label states the claimed country of origin."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-bourbon-50",
+      "application_reference": "TTB-2026-0106",
+      "brand_name": "Copper Kettle",
+      "probes": "A 50 mL miniature. 1.2mm type is legal here and fails on a 750.",
+      "degradation": "none",
+      "image": "images/clean-bourbon-50.png",
+      "thumbnail": "thumbnails/clean-bourbon-50.jpg",
+      "application": {
+        "brand_name": "Copper Kettle",
+        "class_type": "Kentucky Straight Bourbon Whiskey",
+        "alcohol_content": "45% Alc./Vol. (90 Proof)",
+        "net_contents": "50 mL",
+        "bottler_info": "Bottled by Copper Kettle Distillery, 480 Rickhouse Rd, Bardstown, KY",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Copper Kettle",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Kentucky Straight Bourbon Whiskey",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "45% Alc./Vol. (90 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "50 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Copper Kettle Distillery, 480 Rickhouse Rd, Bardstown, KY",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 1.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-tequila-import",
+      "application_reference": "TTB-2026-0107",
+      "brand_name": "Casa Verano",
+      "probes": "The entity-form table: Bros expands to Brothers.",
+      "degradation": "none",
+      "image": "images/clean-tequila-import.png",
+      "thumbnail": "thumbnails/clean-tequila-import.jpg",
+      "application": {
+        "brand_name": "Casa Verano",
+        "class_type": "Tequila Blanco",
+        "alcohol_content": "40% Alc./Vol. (80 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Imported by Verano Bros, 210 Alameda St, San Diego, CA",
+        "country_of_origin": "Mexico",
+        "beverage_class": "distilled_spirits",
+        "is_import": true
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Casa Verano",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Tequila Blanco",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "40% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Imported by Verano Bros, 210 Alameda St, San Diego, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": "Mexico",
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "country_of_origin",
+            "verdict": "match",
+            "note": "An import, and the label states the claimed country of origin."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-rum-import",
+      "application_reference": "TTB-2026-0108",
+      "brand_name": "Palmetto Cay",
+      "probes": "A straightforward passing label.",
+      "degradation": "photo",
+      "image": "images/clean-rum-import.png",
+      "thumbnail": "thumbnails/clean-rum-import.jpg",
+      "application": {
+        "brand_name": "Palmetto Cay",
+        "class_type": "Aged Caribbean Rum",
+        "alcohol_content": "40% Alc./Vol. (80 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Imported by Palmetto Cay Trading Ltd, 44 Wharf Ln, Miami, FL",
+        "country_of_origin": "Barbados",
+        "beverage_class": "distilled_spirits",
+        "is_import": true
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Palmetto Cay",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Aged Caribbean Rum",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "40% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Imported by Palmetto Cay Trading Ltd, 44 Wharf Ln, Miami, FL",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": "Barbados",
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "country_of_origin",
+            "verdict": "match",
+            "note": "An import, and the label states the claimed country of origin."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-brandy-750",
+      "application_reference": "TTB-2026-0109",
+      "brand_name": "Orchard Row",
+      "probes": "A straightforward passing label.",
+      "degradation": "none",
+      "image": "images/clean-brandy-750.png",
+      "thumbnail": "thumbnails/clean-brandy-750.jpg",
+      "application": {
+        "brand_name": "Orchard Row",
+        "class_type": "Grape Brandy",
+        "alcohol_content": "40% Alc./Vol. (80 Proof)",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Orchard Row Cellars, 88 Vineyard Dr, Modesto, CA",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Orchard Row",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Grape Brandy",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "40% Alc./Vol. (80 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Orchard Row Cellars, 88 Vineyard Dr, Modesto, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-liqueur-375",
+      "application_reference": "TTB-2026-0110",
+      "brand_name": "Juniper Hollow",
+      "probes": "A straightforward passing label.",
+      "degradation": "none",
+      "image": "images/clean-liqueur-375.png",
+      "thumbnail": "thumbnails/clean-liqueur-375.jpg",
+      "application": {
+        "brand_name": "Juniper Hollow",
+        "class_type": "Coffee Liqueur",
+        "alcohol_content": "20% Alc./Vol. (40 Proof)",
+        "net_contents": "375 mL",
+        "bottler_info": "Bottled by Juniper Hollow Corp, 3 Founders Sq, Asheville, NC",
+        "country_of_origin": null,
+        "beverage_class": "distilled_spirits",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Juniper Hollow",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Coffee Liqueur",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "20% Alc./Vol. (40 Proof)",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "375 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Bottled by Juniper Hollow Corp, 3 Founders Sq, Asheville, NC",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-wine-chardonnay",
+      "application_reference": "TTB-2026-0111",
+      "brand_name": "Larkspur Bench",
+      "probes": "A straightforward passing label.",
+      "degradation": "none",
+      "image": "images/clean-wine-chardonnay.png",
+      "thumbnail": "thumbnails/clean-wine-chardonnay.jpg",
+      "application": {
+        "brand_name": "Larkspur Bench",
+        "class_type": "Napa Valley Chardonnay",
+        "alcohol_content": "13.5% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Larkspur Bench Winery, 1400 Silverado Trail, Napa, CA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Larkspur Bench",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Napa Valley Chardonnay",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "13.5% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Larkspur Bench Winery, 1400 Silverado Trail, Napa, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-wine-cabernet",
+      "application_reference": "TTB-2026-0112",
+      "brand_name": "Stonebridge Ridge",
+      "probes": "Above the 14% wine tax-class boundary, on a clean match.",
+      "degradation": "photo",
+      "image": "images/clean-wine-cabernet.png",
+      "thumbnail": "thumbnails/clean-wine-cabernet.jpg",
+      "application": {
+        "brand_name": "Stonebridge Ridge",
+        "class_type": "Cabernet Sauvignon",
+        "alcohol_content": "14.5% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Produced and bottled by Stonebridge Ridge Vineyards, 22 Crest Rd, Paso Robles, CA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Stonebridge Ridge",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Cabernet Sauvignon",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "14.5% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Stonebridge Ridge Vineyards, 22 Crest Rd, Paso Robles, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-wine-import-france",
+      "application_reference": "TTB-2026-0113",
+      "brand_name": "Domaine Clairval",
+      "probes": "A straightforward passing label.",
+      "degradation": "none",
+      "image": "images/clean-wine-import-france.png",
+      "thumbnail": "thumbnails/clean-wine-import-france.jpg",
+      "application": {
+        "brand_name": "Domaine Clairval",
+        "class_type": "Cotes du Rhone Red Wine",
+        "alcohol_content": "13% Alc./Vol.",
+        "net_contents": "750 mL",
+        "bottler_info": "Imported by Meridian Wine Company, 615 Canal St, New Orleans, LA",
+        "country_of_origin": "France",
+        "beverage_class": "wine",
+        "is_import": true
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Domaine Clairval",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Cotes du Rhone Red Wine",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "13% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "750 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Imported by Meridian Wine Company, 615 Canal St, New Orleans, LA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": "France",
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "country_of_origin",
+            "verdict": "match",
+            "note": "An import, and the label states the claimed country of origin."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-wine-box-5l",
+      "application_reference": "TTB-2026-0114",
+      "brand_name": "Prairie Gate",
+      "probes": "Over 3 L, so 27 CFR 16.22(b) demands 3mm type rather than 2mm.",
+      "degradation": "none",
+      "image": "images/clean-wine-box-5l.png",
+      "thumbnail": "thumbnails/clean-wine-box-5l.jpg",
+      "application": {
+        "brand_name": "Prairie Gate",
+        "class_type": "California Red Blend",
+        "alcohol_content": "12.5% Alc./Vol.",
+        "net_contents": "5 L",
+        "bottler_info": "Produced and bottled by Prairie Gate Cellars, 305 Orchard Ln, Lodi, CA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Prairie Gate",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "California Red Blend",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "12.5% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "5 L",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Prairie Gate Cellars, 305 Orchard Ln, Lodi, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 3.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-wine-rose-375",
+      "application_reference": "TTB-2026-0115",
+      "brand_name": "Willow Fen",
+      "probes": "A straightforward passing label.",
+      "degradation": "none",
+      "image": "images/clean-wine-rose-375.png",
+      "thumbnail": "thumbnails/clean-wine-rose-375.jpg",
+      "application": {
+        "brand_name": "Willow Fen",
+        "class_type": "Dry Rose Wine",
+        "alcohol_content": "12% Alc./Vol.",
+        "net_contents": "375 mL",
+        "bottler_info": "Produced and bottled by Willow Fen Estate, 9 Marsh Rd, Healdsburg, CA",
+        "country_of_origin": null,
+        "beverage_class": "wine",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Willow Fen",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Dry Rose Wine",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "12% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "375 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Produced and bottled by Willow Fen Estate, 9 Marsh Rd, Healdsburg, CA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-sake-import",
+      "application_reference": "TTB-2026-0116",
+      "brand_name": "Kurogane",
+      "probes": "Taxed as wine and above 14%, so the tighter 1.0 point band applies.",
+      "degradation": "none",
+      "image": "images/clean-sake-import.png",
+      "thumbnail": "thumbnails/clean-sake-import.jpg",
+      "application": {
+        "brand_name": "Kurogane",
+        "class_type": "Junmai Sake",
+        "alcohol_content": "15.5% Alc./Vol.",
+        "net_contents": "720 mL",
+        "bottler_info": "Imported by Kurogane Trading Inc, 1200 Bayfront Ave, Seattle, WA",
+        "country_of_origin": "Japan",
+        "beverage_class": "wine",
+        "is_import": true
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Kurogane",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Junmai Sake",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "15.5% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "720 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Imported by Kurogane Trading Inc, 1200 Bayfront Ave, Seattle, WA",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": "Japan",
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "country_of_origin",
+            "verdict": "match",
+            "note": "An import, and the label states the claimed country of origin."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-malt-ipa",
+      "application_reference": "TTB-2026-0117",
+      "brand_name": "Anvil Point",
+      "probes": "A straightforward passing label.",
+      "degradation": "photo",
+      "image": "images/clean-malt-ipa.png",
+      "thumbnail": "thumbnails/clean-malt-ipa.jpg",
+      "application": {
+        "brand_name": "Anvil Point",
+        "class_type": "India Pale Ale",
+        "alcohol_content": "6.8% Alc./Vol.",
+        "net_contents": "355 mL",
+        "bottler_info": "Brewed and bottled by Anvil Point Brewing Co, 77 Forge St, Bend, OR",
+        "country_of_origin": null,
+        "beverage_class": "malt_beverage",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Anvil Point",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "India Pale Ale",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "6.8% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "355 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Brewed and bottled by Anvil Point Brewing Co, 77 Forge St, Bend, OR",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-malt-pilsner",
+      "application_reference": "TTB-2026-0118",
+      "brand_name": "Marsh Harbor",
+      "probes": "Net contents declared in US customary units on both sides.",
+      "degradation": "none",
+      "image": "images/clean-malt-pilsner.png",
+      "thumbnail": "thumbnails/clean-malt-pilsner.jpg",
+      "application": {
+        "brand_name": "Marsh Harbor",
+        "class_type": "Pilsner Style Lager",
+        "alcohol_content": "4.8% Alc./Vol.",
+        "net_contents": "12 fl oz",
+        "bottler_info": "Brewed and bottled by Marsh Harbor Brewery, 5 Pier Rd, Annapolis, MD",
+        "country_of_origin": null,
+        "beverage_class": "malt_beverage",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Marsh Harbor",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Pilsner Style Lager",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "4.8% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "12 fl oz",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Brewed and bottled by Marsh Harbor Brewery, 5 Pier Rd, Annapolis, MD",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-malt-stout",
+      "application_reference": "TTB-2026-0119",
+      "brand_name": "Blackthorn Mill",
+      "probes": "A straightforward passing label.",
+      "degradation": "none",
+      "image": "images/clean-malt-stout.png",
+      "thumbnail": "thumbnails/clean-malt-stout.jpg",
+      "application": {
+        "brand_name": "Blackthorn Mill",
+        "class_type": "Oatmeal Stout",
+        "alcohol_content": "7.2% Alc./Vol.",
+        "net_contents": "650 mL",
+        "bottler_info": "Brewed and bottled by Blackthorn Mill Brewing, 41 Grist Ave, Burlington, VT",
+        "country_of_origin": null,
+        "beverage_class": "malt_beverage",
+        "is_import": false
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Blackthorn Mill",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Oatmeal Stout",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "7.2% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "650 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Brewed and bottled by Blackthorn Mill Brewing, 41 Grist Ave, Burlington, VT",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": null,
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    },
+    {
+      "id": "clean-malt-import",
+      "application_reference": "TTB-2026-0120",
+      "brand_name": "Sol Cantera",
+      "probes": "A straightforward passing label.",
+      "degradation": "photo",
+      "image": "images/clean-malt-import.png",
+      "thumbnail": "thumbnails/clean-malt-import.jpg",
+      "application": {
+        "brand_name": "Sol Cantera",
+        "class_type": "Cerveza Clara",
+        "alcohol_content": "4.5% Alc./Vol.",
+        "net_contents": "355 mL",
+        "bottler_info": "Imported by Cantera Beverage Company, 800 Rio Grande Blvd, El Paso, TX",
+        "country_of_origin": "Mexico",
+        "beverage_class": "malt_beverage",
+        "is_import": true
+      },
+      "ground_truth": {
+        "readability": {
+          "unreadable": false,
+          "reason": null,
+          "notes": null
+        },
+        "brand_name": {
+          "verbatim": "Sol Cantera",
+          "confidence": 1.0
+        },
+        "class_type": {
+          "verbatim": "Cerveza Clara",
+          "confidence": 1.0
+        },
+        "alcohol_content": {
+          "verbatim": "4.5% Alc./Vol.",
+          "confidence": 1.0
+        },
+        "net_contents": {
+          "verbatim": "355 mL",
+          "confidence": 1.0
+        },
+        "bottler_info": {
+          "verbatim": "Imported by Cantera Beverage Company, 800 Rio Grande Blvd, El Paso, TX",
+          "confidence": 1.0
+        },
+        "country_of_origin": {
+          "verbatim": "Mexico",
+          "confidence": 1.0
+        },
+        "government_warning": {
+          "present": true,
+          "verbatim": "GOVERNMENT WARNING: (1) According to the Surgeon General, women should not drink alcoholic beverages during pregnancy because of the risk of birth defects. (2) Consumption of alcoholic beverages impairs your ability to drive a car or operate machinery, and may cause health problems.",
+          "prefix_is_caps": true,
+          "prefix_is_bold": true,
+          "remainder_is_bold": false,
+          "estimated_type_size_mm": 2.2,
+          "confidence": 1.0
+        }
+      },
+      "expected": {
+        "status": "looks_correct",
+        "unreadable_reason": null,
+        "fields": [
+          {
+            "field": "brand_name",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "class_type",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "alcohol_content",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "net_contents",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "bottler_info",
+            "verdict": "match",
+            "note": "The label prints exactly what the application claims."
+          },
+          {
+            "field": "country_of_origin",
+            "verdict": "match",
+            "note": "An import, and the label states the claimed country of origin."
+          },
+          {
+            "field": "government_warning",
+            "verdict": "match",
+            "note": "Statutory wording, capitalized and bold prefix, legal type size."
+          }
+        ]
+      }
+    }
+  ]
+}

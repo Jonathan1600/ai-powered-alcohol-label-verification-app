@@ -7,7 +7,10 @@ engine. The tool recommends; the agent decides.
 
 Design docs: [docs/approach.md](docs/approach.md) (full reasoning),
 [docs/architecture.md](docs/architecture.md) (diagrams and decision records),
-and [docs/build-plan.md](docs/build-plan.md) (phased action plan).
+[docs/build-plan.md](docs/build-plan.md) (phased action plan),
+[docs/assumptions.md](docs/assumptions.md) (every constant and where it came
+from), and [docs/fixtures.md](docs/fixtures.md) (the seed and evaluation
+corpus).
 
 ## Repository layout
 
@@ -15,7 +18,9 @@ and [docs/build-plan.md](docs/build-plan.md) (phased action plan).
 | --- | --- |
 | `frontend/` | React + Vite + TypeScript, USWDS via `@trussworks/react-uswds` |
 | `backend/` | Python + FastAPI, managed with [uv](https://docs.astral.sh/uv/) |
-| `docs/` | Approach document, architecture/decision records, build plan |
+| `docs/` | Approach document, architecture/decision records, build plan, assumptions, fixture corpus |
+| `backend/fixtures/` | 44 committed seed labels, thumbnails, and the manifest carrying their expected verdicts |
+| `backend/tools/` | The deterministic generator that produces `backend/fixtures/` |
 | `render.yaml` | Render blueprint for the backend (deploy-ready, not yet deployed) |
 | `.env.example` | Template for the single repo-root `.env` used by both halves |
 
@@ -80,6 +85,23 @@ CI runs these offline checks plus the frontend build on every push and pull
 request. The accuracy and latency gate (real model calls, blocking on warm p95
 under 5 seconds) is planned for build-order step 7; see
 [docs/approach.md](docs/approach.md) section 6.
+
+## Seed fixtures
+
+The demo queue is served from 44 committed synthetic labels that also back the
+engine tests and form the evaluation set. `GET /api/seed/queue` returns them,
+all unverified.
+
+The images are committed, so nothing needs regenerating to run or deploy the
+app. To rebuild them after editing `backend/tools/fixtures/specs.py`:
+
+```bash
+cd backend && uv sync --group fixtures && uv run python -m tools.generate_fixtures
+```
+
+Pillow lives in its own `fixtures` dependency group, so neither CI nor the
+Render build installs it. See [docs/fixtures.md](docs/fixtures.md) for the
+corpus inventory and the rendering decisions behind it.
 
 ## Deployment
 
