@@ -70,6 +70,15 @@ class TestClassType:
             Verdict.MATCH
         )
 
+    def test_liquor_on_a_liqueur_application_does_not_pass(self, application, extraction):
+        """Different products under 27 CFR 5, so this must not clear silently."""
+        application.class_type = "Cherry Liqueur"
+        extraction.class_type = field("Cherry Liquor")
+        assert result_for(verify(application, extraction), FieldName.CLASS_TYPE).verdict is not (
+            Verdict.MATCH
+        )
+
+
 class TestAlcoholContent:
     def test_abv_mismatch_beyond_tolerance_is_a_problem(self, application, extraction):
         extraction.alcohol_content = field("40% Alc./Vol. (80 Proof)")
@@ -125,6 +134,15 @@ class TestBottlerInfo:
     def test_address_abbreviation_difference_passes(self, application, extraction):
         extraction.bottler_info = field(
             "Bottled by Stone's Throw Distillery, 120 Main Street, Bardstown, KY"
+        )
+        assert result_for(verify(application, extraction), FieldName.BOTTLER_INFO).verdict is (
+            Verdict.MATCH
+        )
+
+    def test_an_abbreviation_with_a_period_passes(self, application, extraction):
+        """`St.` and `Street` must reach the exact tier, not the fuzzy one."""
+        extraction.bottler_info = field(
+            "Bottled by Stone's Throw Distillery, 120 Main St., Bardstown, KY"
         )
         assert result_for(verify(application, extraction), FieldName.BOTTLER_INFO).verdict is (
             Verdict.MATCH

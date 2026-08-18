@@ -56,8 +56,46 @@ def test_address_expansion_only_matches_whole_tokens():
     assert "street" not in normalize_address("Sterling Vineyards")
 
 
+def test_an_abbreviation_with_a_period_expands_to_the_same_word():
+    """The period must not survive the expansion, or the exact tier never fires."""
+    assert normalize_address("120 Main St.") == normalize_address("120 Main Street")
+
+
+def test_saint_is_not_read_as_street():
+    """`St. Louis` is a place name, not an address line."""
+    assert normalize_address("St. Louis, MO") == normalize_address("Saint Louis, MO")
+    assert "street" not in normalize_address("St. Louis, MO")
+
+
+def test_both_senses_of_st_in_one_address():
+    """Saint precedes a name, Street follows one, in the same string."""
+    abbreviated = normalize_address("44 St. Charles Ave, St. Louis, MO")
+    spelled_out = normalize_address("44 Saint Charles Avenue, Saint Louis, MO")
+    assert abbreviated == spelled_out
+    assert "saint charles avenue" in abbreviated
+
+
+def test_st_before_a_unit_word_is_still_a_street():
+    """A word follows `St` here, but `Ste` is a suffix, not a place name."""
+    assert normalize_address("120 Main St Ste 4") == normalize_address("120 Main Street Suite 4")
+
+
+def test_directionals_expand_inside_a_street_line():
+    assert normalize_address("120 N Main St") == normalize_address("120 North Main Street")
+
+
+def test_directionals_are_left_alone_outside_a_street_line():
+    """A bare `E` in a producer name is a name, not a compass point."""
+    assert "east" not in normalize_address("E & J Gallo Winery")
+
+
 def test_whisky_and_whiskey_are_the_same_designation():
     assert normalize_class_type("Blended Whisky") == normalize_class_type("Blended Whiskey")
+
+
+def test_liquor_and_liqueur_are_different_designations():
+    """Different products under 27 CFR 5. Folding them hides a real error."""
+    assert normalize_class_type("Liqueur") != normalize_class_type("Liquor")
 
 
 def test_token_sort_ignores_word_order():
