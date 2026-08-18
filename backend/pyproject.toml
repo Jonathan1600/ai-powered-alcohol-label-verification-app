@@ -16,6 +16,12 @@ dev = [
     "httpx>=0.28",
     "ruff>=0.8",
 ]
+# Only needed to regenerate the fixture images, which are committed. Kept out of
+# `dev` so CI stays lean and Render's `uv sync --no-dev` build never sees it:
+# install with `uv sync --group fixtures` when running tools/generate_fixtures.py.
+fixtures = [
+    "pillow>=11.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -7,7 +7,8 @@ verifiable rather than felt.
 Design rationale lives in [approach.md](./approach.md); structure and decision
 records live in [architecture.md](./architecture.md); the constants the engine
 relies on and the assumptions behind them are in
-[assumptions.md](./assumptions.md). This document is the sequence of work.
+[assumptions.md](./assumptions.md); the seed and evaluation corpus is described
+in [fixtures.md](./fixtures.md). This document is the sequence of work.
 
 ---
 
@@ -177,6 +178,15 @@ queue, back the tests, and form the evaluation set.
 
 **Done when.** The endpoint returns the full seeded queue with thumbnails, and
 every fixture has a recorded expected verdict.
+
+**Delivered.** 44 fixtures: 24 defect and edge cases, 20 clean. Labels are
+rendered by a committed deterministic generator rather than photographed, which
+is the only way the millimetre type size and bold weight become ground truth
+instead of a second guess. `GET /api/seed/queue` serves every item as
+`not_yet_checked` and withholds the expected verdicts, since the same corpus is
+the phase 8 evaluation set. Expected verdicts are hand-authored and asserted
+against the engine, never derived from it. Full detail in
+[fixtures.md](./fixtures.md).
 
 ---
 

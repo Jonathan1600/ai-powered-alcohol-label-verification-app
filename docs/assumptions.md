@@ -189,7 +189,9 @@ If extraction quality later demands better fuzzy scoring, `rapidfuzz` is a drop
 Recorded because each was a live temptation while building.
 
 - The mock `LabelReader` serves readings handed to it by the caller. It does
-  not carry a fixture corpus. That is phase 3.
+  not carry a fixture corpus. Phase 3 built the corpus but deliberately did not
+  wire it into the reader; a fixture-backed reader arrives in phase 4 alongside
+  the OpenAI one.
 - The abbreviation and synonym tables in `normalize.py` are starter sets, not
   attempts at completeness. They will grow against real fixture failures rather
   than by imagination.
@@ -202,13 +204,17 @@ Recorded because each was a live temptation while building.
 
 ## 8. Known gaps carried forward
 
-| Gap | Consequence | Where it gets addressed |
+Updated after phase 3. The fixture corpus is described in
+[fixtures.md](./fixtures.md); its section 8 carries the same table from the
+corpus side.
+
+| Gap | Consequence | Status |
 | --- | --- | --- |
-| Every threshold in section 4 is unvalidated | Accuracy claims are not yet evidence | Phase 8 |
-| Type size in millimetres is estimated from a photograph | Inherently unreliable, which is why it grades soft per ADR-005 | Phase 3 fixtures should probe how often it is wrong in both directions |
-| Bold detection has the same weakness | Same soft grading | As above |
-| CFR values read from a mirror, not eCFR | Small risk of a stale value | One manual eCFR pass before submission |
-| `beverage_class` defaults to distilled spirits | A record that omits it silently gets the 0.3 point band | Phase 3 seed records must set it explicitly |
-| The `St` position rule is a heuristic | `120 St James St` reads the first `St` as Saint, which is right, but a street named only `St James` with no suffix would read as Saint too | Phase 3 fixture addresses should include both senses |
-| Directionals expand only in a numbered street line | `North Main St, Louisville` with no house number keeps `N` unexpanded on one side if the other spells it out | Same fixture pass |
-| Compound volumes are detected by descending size | A label writing the smaller part first would not be summed | Rare in practice; revisit if a fixture shows it |
+| Every threshold in section 4 is unvalidated | Accuracy claims are not yet evidence | **Open.** Phase 8. The corpus is now the input to that measurement. |
+| Type size in millimetres is estimated from a photograph | Inherently unreliable, which is why it grades soft per ADR-005 | **Now measurable.** Fixtures are rendered at an exact cap height, so phase 4 compares the model's estimate against a known value rather than against an opinion. |
+| Bold detection has the same weakness | Same soft grading | **Now measurable.** Same reason: the prefix is drawn with the bold face or it is not, and `warning-not-bold` and `warning-remainder-bold` cover both halves of 27 CFR 16.22(a). |
+| CFR values read from a mirror, not eCFR | Small risk of a stale value | **Open.** One manual eCFR pass before submission. |
+| `beverage_class` defaults to distilled spirits | A record that omits it silently gets the 0.3 point band | **Closed.** Every seed record sets it explicitly, and `test_every_record_sets_its_beverage_class_explicitly` fails the build if one stops. |
+| The `St` position rule is a heuristic | `120 St James St` reads the first `St` as Saint, which is right, but a street named only `St James` with no suffix would read as Saint too | **Closed for the covered senses.** `address-saint-and-street` carries `1 St James St, St. Louis, MO` against the spelled-out form and matches. |
+| Directionals expand only in a numbered street line | `North Main St, Louisville` with no house number keeps `N` unexpanded on one side if the other spells it out | **Open, and now pinned.** `address-directional` is exactly this case. The engine returns `needs review` where `match` would be ideal. Recorded rather than fixed, because failing toward a human is defensible; see fixtures.md section 8. |
+| Compound volumes are detected by descending size | A label writing the smaller part first would not be summed | **Covered in the passing direction** by `net-contents-compound` and `net-contents-restated`. A label writing the smaller part first still has no fixture. |
