@@ -109,7 +109,7 @@ defensible, and phase 8 is where the fixture set gets to argue with them.
 
 | Choice | Value | Why this value | How to validate |
 | --- | --- | --- | --- |
-| Low-confidence threshold | 0.75 | Below this an extraction is not trusted to clear a field alone. Chosen as a round value; no evidence yet. | Compare against the confidence distribution `gpt-4.1-mini` actually returns on the phase 3 fixtures. It may well cluster far above 0.75, making the gate inert. |
+| Low-confidence threshold | 0.75 | Below this an extraction is not trusted to clear a field alone. Chosen as a round value; no evidence yet. Applies to the government warning as well as the ordinary fields, since the warning is the last one that should clear on a doubtful reading. | Compare against the confidence distribution `gpt-4.1-mini` actually returns on the phase 3 fixtures. It may well cluster far above 0.75, making the gate inert. |
 | Brand name fuzzy tier | 0.85 | Wide enough for a transcription slip, narrow enough that a different product falls through to mismatch. | Count false `needs review` on the 20 clean fixtures. |
 | Class or type fuzzy tier | 0.85 | Same reasoning as brand name. | As above. |
 | Bottler address fuzzy tier | 0.70 | Deliberately wide. Addresses vary harmlessly in form far more than brand names do, and approach.md section 5.3 asks for a bias toward review. | Watch for a genuinely different address scoring above 0.70. |
@@ -153,6 +153,21 @@ verdicts, not partial results. Approach.md section 5.4 makes this a distinct
 outcome, and returning fields extracted from an image nobody could read would
 present a guess as evidence.
 
+**A compound net contents declaration is summed; a restatement is not.** US
+labels write 709 mL as `1 PINT 8 FL. OZ.`, two units naming one volume, while
+`750 mL (25.4 fl oz)` names one volume twice. They are told apart by shape
+rather than by unit system: a parenthesized quantity is always a restatement,
+and outside parentheses the parts of a compound descend in size and never repeat
+a unit. Reading only the first quantity, which is what the engine did first,
+turned a compliant `1 PINT 8 FL. OZ.` label into a 33% net contents mismatch.
+
+**`St` is resolved by position, not by table.** It abbreviates Street in
+`120 Main St` and Saint in `St. Louis`, so the expansion looks at what follows:
+a plain word after it means Saint, and ending the address line means Street.
+Directional abbreviations get a related rule, expanding only inside a segment
+that begins with a house number, so the `E` in `E & J Gallo` stays a name.
+Neither rule is airtight, and both are recorded in section 8.
+
 ---
 
 ## 6. Dependency choice
@@ -194,3 +209,6 @@ Recorded because each was a live temptation while building.
 | Bold detection has the same weakness | Same soft grading | As above |
 | CFR values read from a mirror, not eCFR | Small risk of a stale value | One manual eCFR pass before submission |
 | `beverage_class` defaults to distilled spirits | A record that omits it silently gets the 0.3 point band | Phase 3 seed records must set it explicitly |
+| The `St` position rule is a heuristic | `120 St James St` reads the first `St` as Saint, which is right, but a street named only `St James` with no suffix would read as Saint too | Phase 3 fixture addresses should include both senses |
+| Directionals expand only in a numbered street line | `North Main St, Louisville` with no house number keeps `N` unexpanded on one side if the other spells it out | Same fixture pass |
+| Compound volumes are detected by descending size | A label writing the smaller part first would not be summed | Rare in practice; revisit if a fixture shows it |
