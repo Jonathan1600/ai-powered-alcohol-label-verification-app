@@ -5,8 +5,9 @@ Each phase states its goal, its tasks, and an explicit done-when so progress is
 verifiable rather than felt.
 
 Design rationale lives in [approach.md](./approach.md); structure and decision
-records live in [architecture.md](./architecture.md). This document is the
-sequence of work.
+records live in [architecture.md](./architecture.md); the constants the engine
+relies on and the assumptions behind them are in
+[assumptions.md](./assumptions.md). This document is the sequence of work.
 
 ---
 
