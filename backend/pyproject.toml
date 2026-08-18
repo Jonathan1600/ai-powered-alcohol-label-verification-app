@@ -32,6 +32,13 @@ fixtures = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "live: sends a real request to the OpenAI API. Needs OPENAI_API_KEY and costs money.",
+]
+# Live tests are opt-in. Phase 2 promised the suite runs with no API key present
+# and that promise is what keeps the engine independently testable, so the
+# default selection stays offline and an explicit -m live asks for the rest.
+addopts = "-m 'not live'"
 
 [tool.ruff]
 line-length = 100

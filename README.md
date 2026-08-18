@@ -20,7 +20,7 @@ corpus).
 | `backend/` | Python + FastAPI, managed with [uv](https://docs.astral.sh/uv/) |
 | `docs/` | Approach document, architecture/decision records, build plan, assumptions, fixture corpus |
 | `backend/fixtures/` | 44 committed seed labels, thumbnails, and the manifest carrying their expected verdicts |
-| `backend/tools/` | The deterministic generator that produces `backend/fixtures/` |
+| `backend/tools/` | The deterministic fixture generator, plus `probe_extraction.py` for prompt iteration |
 | `render.yaml` | Render blueprint for the backend (deploy-ready, not yet deployed) |
 | `.env.example` | Template for the single repo-root `.env` used by both halves |
 
@@ -28,8 +28,9 @@ corpus).
 
 - Python 3.12+ and [uv](https://docs.astral.sh/uv/getting-started/installation/)
 - Node.js 20+ (developed on 24)
-- An OpenAI API key (only needed once real extraction endpoints exist; the
-  health check runs without one)
+- An OpenAI API key. Needed for `POST /api/verify` and the `live` tests. The
+  health check, the seed queue, and the whole offline test suite run without
+  one.
 
 ## Setup
 
@@ -71,7 +72,9 @@ the API base URL are wired correctly end to end.
 
 ## Tests
 
-From `backend/`:
+From `backend/`. This runs offline and needs no API key, which is deliberate:
+the matching engine is the part worth testing hardest and it must stay
+independently testable.
 
 ```bash
 uv run pytest
@@ -81,10 +84,53 @@ uv run pytest
 uv run ruff check .
 ```
 
-CI runs these offline checks plus the frontend build on every push and pull
-request. The accuracy and latency gate (real model calls, blocking on warm p95
-under 5 seconds) is planned for build-order step 7; see
-[docs/approach.md](docs/approach.md) section 6.
+Live tests that call the real model are marked `live` and deselected by
+default. They cost a small amount of money per run.
+
+```bash
+uv run pytest -m live
+```
+
+From `frontend/`:
+
+```bash
+npm run test
+```
+
+CI runs the offline suites plus the frontend build on every push and pull
+request. The accuracy and latency gate (real model calls) is planned for
+build-order step 7; see [docs/approach.md](docs/approach.md) section 6, which
+also records why its threshold cannot be the one originally stated.
+
+## Verifying a label
+
+`POST /api/verify` takes a multipart form with the label image and the claimed
+application record, and returns per-field verdicts with server-side stage
+timings.
+
+```bash
+curl -X POST http://localhost:8000/api/verify   -F "image=@backend/fixtures/images/clean-bourbon-750.png"   -F 'application={"brand_name":"Copper Kettle","class_type":"Kentucky Straight Bourbon Whiskey","alcohol_content":"45% Alc./Vol. (90 Proof)","net_contents":"750 mL","bottler_info":"Bottled by Copper Kettle Distillery, 480 Rickhouse Rd, Bardstown, KY","beverage_class":"distilled_spirits","is_import":false}'
+```
+
+To iterate on the extraction prompt, `tools/probe_extraction.py` shows a reading
+beside the fixture's ground truth:
+
+```bash
+uv run python -m tools.probe_extraction --all-warnings
+```
+
+### Measured latency
+
+Not yet meeting the 5 second requirement, and the gap is large enough to state
+plainly rather than round off. From a residential connection, warm, the
+extraction call alone measured a p50 between 5 and 7 seconds and a p95 of 20.4
+seconds across the fixture corpus. Rate limiting, image payload size, and the
+image `detail` parameter were each ruled out by measurement rather than by
+argument.
+
+The deployed path has not been measured, so the number that matters does not
+exist yet. [docs/approach.md](docs/approach.md) section 6 carries the full
+measurement and the three available responses.
 
 ## Seed fixtures
 

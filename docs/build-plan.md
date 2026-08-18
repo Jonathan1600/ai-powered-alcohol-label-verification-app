@@ -209,6 +209,38 @@ against the engine, never derived from it. Full detail in
 **Done when.** A fixture label verifies end to end against the live model in
 under 5 seconds warm, with the per-stage breakdown present in the response.
 
+**Delivered, except the latency half of the done-when.** `OpenAILabelReader`
+makes one Responses API call with structured outputs; `POST /api/verify` takes a
+multipart image plus the claimed record and returns verdicts with per-stage
+timings. 296 offline tests still run with no API key, and 9 live tests sit behind
+a `live` marker that is deselected by default. `tools/probe_extraction.py` is the
+prompt-iteration loop.
+
+Four things were learned by measuring rather than by reasoning, and three of them
+changed the code:
+
+| Finding | Response |
+| --- | --- |
+| The model returns null for a millimetre type size | It is asked for a cap-height ratio instead and the reader converts. ADR-011. |
+| It reported `prefix_is_caps` as true on a warning it had just transcribed in title case, turning a violation into a clean pass | The signal is no longer requested; capitalization is derived from the transcription. ADR-011. |
+| It does **not** repair an altered warning it can read | Nothing to fix. This was the phase's biggest risk and it is retired, with a live test pinning it. |
+| Client-side downscaling does not speed up the model call | Kept for upload time only, and the claim in approach.md section 6 corrected. |
+
+**The latency requirement is not met.** Warm p50 sits between 5 and 7 seconds and
+p95 measured 20.4 seconds for the extraction call alone, against a 5 second
+budget for the whole round trip. Rate limiting, payload size, and the `detail`
+parameter were each ruled out by measurement. This is recorded in approach.md
+section 6 under "Measured, phase 4", and it forces a revision to ADR-009 that
+cannot be settled until phase 1 supplies a number from the deployed path rather
+than from a residential connection.
+
+**Two carried forward.** `unreadable-glare` and `unreadable-angle` are read
+anyway, with the model reconstructing the statutory warning from memory rather
+than reporting that it cannot see it; fixtures.md section 5 has the detail and
+the dial that addresses it. And the millimetre estimates run high, by 4% to 53%
+against a known rendering, which assumptions.md section 4 now carries as a
+calibration target.
+
 ---
 
 ## Phase 5: Review queue screen
