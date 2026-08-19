@@ -528,6 +528,14 @@ also measures the Render endpoint separately after deployment. The product
 requirement remains open until that deployed evidence exists; accepting a
 baseline is not permission to describe the service as fast enough.
 
+**Phase 9 local review.** One warm-up plus one unretried local-reader call per
+fixture across the full 44-item corpus produced 77.3% overall-status accuracy,
+92.1% field-verdict accuracy, model-call p50 4.62 seconds, and model-call p95
+7.81 seconds, with no unsafe false-clear. It passed the reviewed local
+regression gate without changing its approved baseline. This is useful current
+evidence, but it is neither a browser measurement nor a deployed Render
+measurement; the five-second user-experience requirement remains open.
+
 ### Acceptance
 
 The evaluation script in section 5.8 records one warm-up plus one sequential,

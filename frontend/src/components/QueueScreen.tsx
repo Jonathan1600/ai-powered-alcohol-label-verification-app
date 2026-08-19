@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
-import { Alert, CardGroup, GridContainer } from '@trussworks/react-uswds'
+import { Alert, Button, CardGroup, GridContainer } from '@trussworks/react-uswds'
 
 import { API_BASE_URL, getSeedQueue, seedToQueueItem, toVerifyFailure, verifyLabel } from '../lib/api'
 import { runBatch } from '../lib/batch'
@@ -50,7 +50,7 @@ function QueueScreen() {
 
   const stopRef = useRef<AbortController | null>(null)
 
-  useEffect(() => {
+  const loadSeedQueue = useCallback(() => {
     getSeedQueue()
       .then((queue) => {
         const items = queue.items.map(seedToQueueItem)
@@ -59,6 +59,10 @@ function QueueScreen() {
       })
       .catch((error: Error) => setLoadError(error.message))
   }, [])
+
+  useEffect(() => {
+    void loadSeedQueue()
+  }, [loadSeedQueue])
 
   // Seeded fixtures first, then anything the agent added, which is also the
   // order a fresh ingestion appears in at the foot of the grid.
@@ -303,7 +307,19 @@ function QueueScreen() {
       {loadError && (
         <Alert type="error">
           <h2 className="usa-alert__heading">Backend unreachable</h2>
-          Could not reach {API_BASE_URL}/api/seed/queue ({loadError}). Is the backend running?
+          <p>
+            Could not reach {API_BASE_URL}/api/seed/queue ({loadError}). Is the backend running?
+          </p>
+          <Button
+            type="button"
+            outline
+            onClick={() => {
+              setLoadError(null)
+              void loadSeedQueue()
+            }}
+          >
+            Try again
+          </Button>
         </Alert>
       )}
       {!seeded && !loadError && <p>Loading review queue…</p>}
