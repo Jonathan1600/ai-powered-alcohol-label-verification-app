@@ -34,6 +34,12 @@ function AddLabelsPanel({ existingReferences, onIngested, onClose }: AddLabelsPa
 
   const ready = images.length > 0 && csvFile !== null
 
+  function focusProblems() {
+    // The summary is rendered by the state update above, so wait for the next
+    // frame before moving a keyboard user to the corrective information.
+    requestAnimationFrame(() => errorRef.current?.focus())
+  }
+
   async function handleAdd() {
     if (!csvFile) return
     setProblems([])
@@ -47,7 +53,7 @@ function AddLabelsPanel({ existingReferences, onIngested, onClose }: AddLabelsPa
         setProblems(result.problems)
         // Send focus to the summary. Without it a keyboard user is left on a
         // button that appears to have done nothing.
-        requestAnimationFrame(() => errorRef.current?.focus())
+        focusProblems()
         return
       }
       onIngested(result.items)
@@ -55,6 +61,7 @@ function AddLabelsPanel({ existingReferences, onIngested, onClose }: AddLabelsPa
       setProblems([
         { line: null, message: error instanceof Error ? error.message : String(error) },
       ])
+      focusProblems()
     } finally {
       setBusy(null)
     }

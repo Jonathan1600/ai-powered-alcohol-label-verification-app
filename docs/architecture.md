@@ -304,6 +304,12 @@ between 5 and 7. The phase 8 evaluator therefore has local-reader and deployed
 endpoint modes with separate baselines. It prevents regressions without calling
 the five-second requirement satisfied; that claim still awaits deployed evidence.
 
+**Phase 9 status.** The committed baseline has a reviewed local target. The
+deployed target remains intentionally absent until a post-deploy measurement is
+reviewed. Repository code cannot configure the required GitHub Actions secret
+or branch protection, so documentation treats those as operational setup rather
+than as completed guarantees.
+
 ### ADR-010: USWDS through the React wrapper
 
 **Decision.** `@trussworks/react-uswds` layered on `@uswds/uswds`, with USWDS

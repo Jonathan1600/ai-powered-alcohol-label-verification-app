@@ -220,7 +220,7 @@ corpus side.
 
 | Gap | Consequence | Status |
 | --- | --- | --- |
-| Every threshold in section 4 is unvalidated | Accuracy claims are not yet evidence | **Measurement implemented; baseline pending.** `tools.evaluate` reports per-field outcomes and guards reviewed regression limits once a live baseline is accepted. |
+| Every threshold in section 4 is unvalidated | Accuracy claims are not yet evidence | **Reviewed local baseline accepted.** `tools.evaluate` guards local regression limits; the deployed target remains pending until a reviewed post-deploy run. |
 | Type size in millimetres is estimated from a photograph | Inherently unreliable, which is why it grades soft per ADR-005 | **Measurable, still soft.** The evaluator now reports type-size MAE and bias against rendered ground truth; calibration needs a reviewed live run before changing the anchor. |
 | Bold detection has the same weakness | Same soft grading | **Measurable, still soft.** The evaluator reports prefix/remainder bold accuracy; neither signal is a hard gate. |
 | CFR values read from a mirror, not eCFR | Small risk of a stale value | **Open.** One manual eCFR pass before submission. |
@@ -229,4 +229,4 @@ corpus side.
 | Directionals expand only in a numbered street line | `North Main St, Louisville` with no house number keeps `N` unexpanded on one side if the other spells it out | **Open, and now pinned.** `address-directional` is exactly this case. The engine returns `needs review` where `match` would be ideal. Recorded rather than fixed, because failing toward a human is defensible; see fixtures.md section 8. |
 | Compound volumes are detected by descending size | A label writing the smaller part first would not be summed | **Covered in the passing direction** by `net-contents-compound` and `net-contents-restated`. A label writing the smaller part first still has no fixture. |
 | Degraded fixtures may not defeat the model | An `unreadable` expectation that the model reads anyway scores as a miss | **Open, and now evidenced.** `unreadable-blur` reports unreadable correctly. `unreadable-glare` and `unreadable-angle` are read anyway, and worse, the model reconstructs the statutory warning from memory on both. See fixtures.md section 5. |
-| Latency exceeds the stated requirement | The 5 second figure is not met by the measurement available | **Open.** Warm p50 5 to 7s, p95 20.4s for the extraction call alone, from a residential connection. Rate limiting, payload size, and the `detail` parameter were each ruled out by measurement. See approach.md section 6. |
+| Latency exceeds the stated requirement | The 5 second figure is not met by the measurement available | **Open.** The Phase 9 local 44-fixture review measured model-call p50 4.62s and p95 7.81s; it is not an end-to-end or deployed measurement, and p95 still exceeds the requirement. See approach.md section 6. |

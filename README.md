@@ -10,7 +10,8 @@ Design docs: [docs/approach.md](docs/approach.md) (full reasoning),
 [docs/build-plan.md](docs/build-plan.md) (phased action plan),
 [docs/assumptions.md](docs/assumptions.md) (every constant and where it came
 from), and [docs/fixtures.md](docs/fixtures.md) (the seed and evaluation
-corpus).
+corpus), and [docs/accessibility.md](docs/accessibility.md) (the focused
+accessibility review and release checklist).
 
 ## Repository layout
 
@@ -112,6 +113,10 @@ with no automatic retry. Its local mode is the pre-merge regression gate:
 uv run python -m tools.evaluate --target local --json-output evaluation-report.json
 ```
 
+This is a live OpenAI evaluation, not an offline test. Put `OPENAI_API_KEY` in
+the repository-root `.env` before running it. A `Missing credentials` error
+means that variable is absent from both the shell and `.env`.
+
 After deploying the backend, measure the Render endpoint separately. This is
 the deployed-backend path, not browser render time:
 
@@ -139,6 +144,24 @@ false-clears, failed fixture calls, material accuracy regression, and p95 more
 than 25% above the approved measurement; it does not falsely claim the current
 five-second product requirement is met.
 
+### Current local evaluation evidence
+
+The repository contains a reviewed local baseline for the committed 44-fixture
+corpus. The Phase 9 review run used one warm-up and one unretried call per
+fixture; it passed that gate without unsafe false-clears:
+
+| Measure | Result |
+| --- | --- |
+| Overall-status accuracy | 77.3% (10 errors) |
+| Field-verdict accuracy | 92.1% (21 of 266 field verdicts incorrect) |
+| Model-call p50 | 4.62 seconds |
+| Model-call p95 | 7.81 seconds |
+
+These are local-reader model-call measurements, not end-to-end browser times
+and not Render measurements. They do not establish that the five-second
+user-experience requirement is met. The deployed path remains unmeasured until
+the separate `--target deployed` command is run after deployment.
+
 For the same-repository PR gate, add the key separately as the repository
 Actions secret `OPENAI_API_KEY` under **Settings → Secrets and variables →
 Actions**. A local `.env` and Render's environment settings are intentionally
@@ -164,16 +187,29 @@ uv run python -m tools.probe_extraction --all-warnings
 
 ### Measured latency
 
-Not yet meeting the 5 second requirement, and the gap is large enough to state
-plainly rather than round off. From a residential connection, warm, the
-extraction call alone measured a p50 between 5 and 7 seconds and a p95 of 20.4
-seconds across the fixture corpus. Rate limiting, image payload size, and the
-image `detail` parameter were each ruled out by measurement rather than by
-argument.
+The current local evidence is the Phase 9 44-fixture run above: model-call p50
+4.62 seconds and p95 7.81 seconds. It is still not an end-to-end measurement,
+and p95 exceeds the five-second product requirement. The deployed path has not
+been measured, so no deployed performance claim is made. Historical Phase 4
+measurements and the investigation of payload, rate limiting, and `detail` are
+preserved in [docs/approach.md](docs/approach.md) section 6.
 
-The deployed path has not been measured, so the number that matters does not
-exist yet. [docs/approach.md](docs/approach.md) section 6 carries the full
-measurement and the three available responses.
+## Design choices and limits
+
+- Nothing is persisted: the backend discards request images and queue decisions
+  live only in the browser session. The reset control clears that session work.
+- The 44 synthetic seed labels stand in for applications that a future COLA
+  integration would provide; this prototype does not connect to COLA or make
+  approval decisions.
+- The statutory warning wording and capitalization are strict. Bold and type
+  size are soft `needs review` signals because a photograph is not reliable
+  enough to make either a hard failure.
+- The prototype uses OpenAI behind `LabelReader`. That adapter is the production
+  seam for a self-hosted vision or OCR reader if the documented firewall
+  constraint prevents cloud access.
+- Render Starter is intentional: an always-on backend avoids the free tier's
+  idle cold start. Deployment is still pending, so this has not yet been
+  measured in production.
 
 ## Batch verification and adding labels
 
