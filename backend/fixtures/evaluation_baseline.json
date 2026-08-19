@@ -1,0 +1,16 @@
+{
+  "manifest_sha256": "3c1cf47115e16b854bf61336007a4e3b9cf099a741d0f016a01958cc8c1caa39",
+  "model": "gpt-4.1-mini",
+  "prompt_version": "2026-08-18.2",
+  "schema_version": 1,
+  "targets": {
+    "local": {
+      "approved_at": "2026-08-19T08:44:53.483778+00:00",
+      "field_error_baseline": 24,
+      "p95_baseline_ms": 6415.584322006907,
+      "p95_limit_ms": 8100.0,
+      "p95_metric": "model_ms",
+      "status_error_baseline": 12
+    }
+  }
+}

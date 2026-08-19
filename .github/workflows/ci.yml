@@ -4,6 +4,18 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Evaluation boundary to run after a reviewed deployment.
+        required: true
+        default: deployed
+        type: choice
+        options: [local, deployed]
+
+concurrency:
+  group: live-evaluation-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   backend:
@@ -39,7 +51,51 @@ jobs:
       - run: npm run test
       - run: npm run build
 
-  # TODO(build-order step 7): accuracy + latency gate job. Makes real
-  # gpt-4.1-mini calls against the fixture set, needs OPENAI_API_KEY as a repo
-  # secret (so it cannot run on fork PRs), and blocks merge when accuracy
-  # regresses or warm p95 exceeds 5 seconds. See docs/approach.md section 6.
+  evaluation:
+    name: Evaluation gate (live)
+    # Fork PRs cannot read repository secrets. The required check therefore
+    # applies to the repository's own pull requests, where it protects merges.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      EVALUATION_API_BASE_URL: ${{ vars.EVALUATION_API_BASE_URL }}
+      EVALUATION_TARGET: ${{ github.event.inputs.target || 'local' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      # Do this before any model call. A missing, unreviewed baseline should not
+      # consume a fixture run and cannot be a passing required check.
+      - name: Require an approved baseline
+        run: |
+          test -f fixtures/evaluation_baseline.json || {
+            echo "No approved evaluation baseline. Run tools.evaluate with --accept-baseline after reviewing a healthy live run." >&2
+            exit 1
+          }
+      - name: Require the local evaluator credential
+        if: env.EVALUATION_TARGET == 'local'
+        run: |
+          test -n "$OPENAI_API_KEY" || {
+            echo "Missing repository Actions secret OPENAI_API_KEY. Add it under Settings > Secrets and variables > Actions before running the local live evaluation gate." >&2
+            exit 1
+          }
+      - run: uv sync --frozen
+      - name: Evaluate fixture corpus
+        run: >-
+          uv run python -m tools.evaluate
+          --target "$EVALUATION_TARGET"
+          --json-output evaluation-report.json
+      - name: Upload evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-${{ github.run_id }}
+          path: backend/evaluation-report.json
+          if-no-files-found: ignore

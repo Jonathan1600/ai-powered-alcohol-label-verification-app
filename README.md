@@ -98,9 +98,52 @@ npm run test
 ```
 
 CI runs the offline suites plus the frontend build on every push and pull
-request. The accuracy and latency gate (real model calls) is planned for
-build-order step 7; see [docs/approach.md](docs/approach.md) section 6, which
-also records why its threshold cannot be the one originally stated.
+request. A separate live evaluation gate runs on the latest same-repository PR
+revision only, so real-model calls are not duplicated across pushes. It needs a
+reviewed baseline before it can pass; fork PRs cannot run it because GitHub does
+not expose repository secrets to forks.
+
+### Live evaluation
+
+The evaluator uses one warm-up plus one sequential call per committed fixture,
+with no automatic retry. Its local mode is the pre-merge regression gate:
+
+```bash
+uv run python -m tools.evaluate --target local --json-output evaluation-report.json
+```
+
+After deploying the backend, measure the Render endpoint separately. This is
+the deployed-backend path, not browser render time:
+
+```bash
+EVALUATION_API_BASE_URL=https://your-service.onrender.com \
+  uv run python -m tools.evaluate --target deployed --json-output evaluation-report.json
+```
+
+Only after reviewing healthy reports, create the local baseline and then append
+the deployed baseline to the same committed file:
+
+```bash
+uv run python -m tools.evaluate --accept-report evaluation-report.json
+
+EVALUATION_API_BASE_URL=https://your-service.onrender.com \
+  uv run python -m tools.evaluate --target deployed --json-output deployed-evaluation-report.json
+uv run python -m tools.evaluate --accept-report deployed-evaluation-report.json
+```
+
+The initial report-only run succeeds even without a baseline; CI still fails
+before making model calls until the approved file is committed.
+
+The baseline binds the manifest hash, model, and prompt version. It blocks unsafe
+false-clears, failed fixture calls, material accuracy regression, and p95 more
+than 25% above the approved measurement; it does not falsely claim the current
+five-second product requirement is met.
+
+For the same-repository PR gate, add the key separately as the repository
+Actions secret `OPENAI_API_KEY` under **Settings → Secrets and variables →
+Actions**. A local `.env` and Render's environment settings are intentionally
+unavailable to GitHub-hosted runners. The manual deployed mode instead needs the
+repository variable `EVALUATION_API_BASE_URL`.
 
 ## Verifying a label
 
