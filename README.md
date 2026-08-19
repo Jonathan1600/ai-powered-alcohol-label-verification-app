@@ -139,6 +139,12 @@ false-clears, failed fixture calls, material accuracy regression, and p95 more
 than 25% above the approved measurement; it does not falsely claim the current
 five-second product requirement is met.
 
+For the same-repository PR gate, add the key separately as the repository
+Actions secret `OPENAI_API_KEY` under **Settings → Secrets and variables →
+Actions**. A local `.env` and Render's environment settings are intentionally
+unavailable to GitHub-hosted runners. The manual deployed mode instead needs the
+repository variable `EVALUATION_API_BASE_URL`.
+
 ## Verifying a label
 
 `POST /api/verify` takes a multipart form with the label image and the claimed

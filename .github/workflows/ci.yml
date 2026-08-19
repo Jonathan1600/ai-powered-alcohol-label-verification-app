@@ -79,6 +79,13 @@ jobs:
             echo "No approved evaluation baseline. Run tools.evaluate with --accept-baseline after reviewing a healthy live run." >&2
             exit 1
           }
+      - name: Require the local evaluator credential
+        if: env.EVALUATION_TARGET == 'local'
+        run: |
+          test -n "$OPENAI_API_KEY" || {
+            echo "Missing repository Actions secret OPENAI_API_KEY. Add it under Settings > Secrets and variables > Actions before running the local live evaluation gate." >&2
+            exit 1
+          }
       - run: uv sync --frozen
       - name: Evaluate fixture corpus
         run: >-
