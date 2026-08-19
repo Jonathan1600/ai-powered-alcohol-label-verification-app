@@ -256,7 +256,9 @@ three-column table of "Application said" / "Label shows" / status, with a
 plain-English reason per row and a confirm or override control. The label image
 sits alongside. No confidence decimals shown to the user. Next and previous
 controls move through the queue without returning to it, since an agent working
-a stack should not have to navigate back after every item.
+a stack should not have to navigate back after every item. The browser's Back
+and Forward controls return to the queue and reopen the last review item;
+the review URL is represented as `?review=<item-id>`.
 
 Built with USWDS, which carries real advantages here beyond looking like a
 government product:

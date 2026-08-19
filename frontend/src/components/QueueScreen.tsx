@@ -8,6 +8,14 @@ import { downloadCsv, exportCsv, exportFilename } from '../lib/export'
 import { revokeItemUrls } from '../lib/ingest'
 import { applyOrder, awaitingCheck, cardStatus, sameOrder, sortQueue, STATUS_LABELS } from '../lib/queue'
 import { DECISION_LABELS } from '../lib/review'
+import {
+  dashboardUrl,
+  isReviewHistoryState,
+  queueHistoryState,
+  reviewHistoryState,
+  reviewIdFromLocation,
+  reviewUrl,
+} from '../lib/review-history'
 import { EMPTY_SESSION, hasWork, sessionReducer, type BatchStop, type Decision } from '../lib/session'
 import AddLabelsPanel from './AddLabelsPanel'
 import BatchBar from './BatchBar'
@@ -29,6 +37,22 @@ const PROVIDER_FAILURE_LIMIT = 5
 const ANNOUNCE_EVERY = 25
 const ANNOUNCE_EVERY_MS = 10_000
 
+function validReviewOrder(
+  reviewId: string,
+  state: unknown,
+  availableIds: Set<string>,
+  fallback: string[],
+): string[] {
+  if (!isReviewHistoryState(state)) return fallback
+  const seen = new Set<string>()
+  const available = state.order.filter((id) => {
+    if (seen.has(id) || !availableIds.has(id)) return false
+    seen.add(id)
+    return true
+  })
+  return available.includes(reviewId) ? available : fallback
+}
+
 function QueueScreen() {
   const [seeded, setSeeded] = useState<QueueItem[] | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -49,13 +73,35 @@ function QueueScreen() {
   const [adding, setAdding] = useState(false)
 
   const stopRef = useRef<AbortController | null>(null)
+  const historyReadyRef = useRef(false)
+  const selectedIdRef = useRef<string | null>(null)
 
   const loadSeedQueue = useCallback(() => {
     getSeedQueue()
       .then((queue) => {
         const items = queue.items.map(seedToQueueItem)
+        const initialOrder = items.map((item) => item.id)
+        const reviewId = reviewIdFromLocation()
+
+        // The browser's initial entry has no app state. Turn a direct review
+        // URL into queue -> review so Back returns to this dashboard first.
+        if (reviewId && items.some((item) => item.id === reviewId)) {
+          let state = window.history.state
+          if (!isReviewHistoryState(state) || state.reviewId !== reviewId) {
+            window.history.replaceState(queueHistoryState(), '', dashboardUrl())
+            state = reviewHistoryState(reviewId, initialOrder)
+            window.history.pushState(state, '', reviewUrl(reviewId))
+          }
+          setOrder(validReviewOrder(reviewId, state, new Set(initialOrder), initialOrder))
+          setSelectedId(reviewId)
+        } else {
+          window.history.replaceState(queueHistoryState(), '', dashboardUrl())
+          setOrder([])
+          setSelectedId(null)
+        }
+        historyReadyRef.current = true
         setSeeded(items)
-        setDisplayOrder(items.map((item) => item.id))
+        setDisplayOrder(initialOrder)
       })
       .catch((error: Error) => setLoadError(error.message))
   }, [])
@@ -71,6 +117,10 @@ function QueueScreen() {
     [seeded, session.added],
   )
   const byId = useMemo(() => new Map(items.map((item) => [item.id, item])), [items])
+
+  useEffect(() => {
+    selectedIdRef.current = selectedId
+  }, [selectedId])
 
   const attentionOrder = useMemo(
     () => sortQueue(items, session.checks, session.decisions).map((item) => item.id),
@@ -94,6 +144,45 @@ function QueueScreen() {
   }
 
   const applySort = useCallback(() => setDisplayOrder(attentionOrder), [attentionOrder])
+
+  const currentQueueOrder = useCallback(
+    () => applyOrder(items, displayOrder).map((item) => item.id),
+    [items, displayOrder],
+  )
+
+  // A review's order is frozen when it opens, but an old URL can outlive an
+  // added item that was later reset. Keep valid snapshots and otherwise fall
+  // back to the queue's current order rather than opening a broken review.
+  const orderForReview = useCallback(
+    (reviewId: string, state: unknown) =>
+      validReviewOrder(reviewId, state, new Set(byId.keys()), currentQueueOrder()),
+    [byId, currentQueueOrder],
+  )
+
+  const closeReview = useCallback((returnId: string | null) => {
+    setReturnFocusId(returnId)
+    setOrder([])
+    setSelectedId(null)
+  }, [])
+
+  useEffect(() => {
+    if (!historyReadyRef.current) return
+
+    function handlePopState(event: PopStateEvent) {
+      const reviewId = reviewIdFromLocation()
+      if (reviewId && byId.has(reviewId)) {
+        setOrder(orderForReview(reviewId, event.state))
+        setSelectedId(reviewId)
+        return
+      }
+
+      if (reviewId) window.history.replaceState(queueHistoryState(), '', dashboardUrl())
+      closeReview(selectedIdRef.current)
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [byId, closeReview, orderForReview])
 
   function handleVerify(item: QueueItem) {
     // Idempotence guard: only an unchecked card can start a verification, so a
@@ -219,21 +308,30 @@ function QueueScreen() {
   }
 
   function handleOpen(item: QueueItem) {
-    setOrder(applyOrder(items, displayOrder).map((entry) => entry.id))
+    const nextOrder = currentQueueOrder()
+    window.history.pushState(reviewHistoryState(item.id, nextOrder), '', reviewUrl(item.id))
+    setOrder(nextOrder)
     setSelectedId(item.id)
   }
 
   function handleNavigate(id: string) {
     const next = byId.get(id)
     if (!next) return
+    // Previous/Next describes movement inside one review task. Replacing this
+    // entry means the browser Back arrow still takes the agent to the queue.
+    window.history.replaceState(reviewHistoryState(id, order), '', reviewUrl(id))
     setSelectedId(id)
     setAnnouncement(`${labelFor(next)}: ${STATUS_LABELS[cardStatus(session.checks[id])]}`)
   }
 
   const handleBack = useCallback(() => {
-    setReturnFocusId(selectedId)
-    setSelectedId(null)
-  }, [selectedId])
+    if (isReviewHistoryState(window.history.state)) {
+      window.history.back()
+      return
+    }
+    window.history.replaceState(queueHistoryState(), '', dashboardUrl())
+    closeReview(selectedIdRef.current)
+  }, [closeReview])
 
   function handleDecide(id: string, decision: Decision) {
     dispatch({ type: 'decide', id, decision })
