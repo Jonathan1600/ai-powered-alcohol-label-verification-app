@@ -262,7 +262,7 @@ item flips its card to a real verdict.
 
 ---
 
-## Phase 6: Review detail, confirm/override, and reset
+## Phase 6: Review detail, reviewer outcomes, and reset
 
 **Goal.** The agent can actually work an item and finish it.
 
@@ -271,8 +271,8 @@ item flips its card to a real verdict.
 1. Review view: status banner, three-column comparison table with
    plain-English reasons, label image alongside.
 2. Word-level diff rendering for government warning failures.
-3. Confirm and override controls, with override captured as the accuracy
-   signal.
+3. Accept and reject controls for every completed verification result, while
+   preserving the raw system finding until a reviewer records an outcome.
 4. Next and previous navigation through the queue without returning to it.
 5. Reset control restoring the seeded state, placed away from the working
    actions, confirming only when there is review work to lose.
@@ -317,7 +317,7 @@ written and are recorded rather than slipped in:
 
 Guardrails that earned their place: a confirmation before runs above 25 items
 (real money, real minutes), a circuit breaker after 5 consecutive provider
-failures, bulk confirm restricted to "looks correct", and CSV cells neutralised
+failures, bulk accept restricted to "looks correct", and CSV cells neutralised
 against formula injection. Session state moved from result-only to the full
 verify response so the export can attribute each verdict to the model and
 prompt that produced it, which phase 8 needs anyway.

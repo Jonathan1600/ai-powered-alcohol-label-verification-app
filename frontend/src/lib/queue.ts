@@ -67,7 +67,7 @@ export function awaitingCheck(status: CardStatus): boolean {
 // Deterministic sort by (status rank, undecided first, seed position).
 //
 // The second key is what makes this a work queue rather than a list: an item
-// the agent has confirmed or overridden is finished, so it sinks below the
+// the reviewer has accepted or rejected is finished, so it sinks below the
 // items of the same status that still need a decision, and the top of the
 // screen is always what is left to do. Within a rank the manifest order is
 // preserved regardless of the engine's stability guarantees. Returns a new

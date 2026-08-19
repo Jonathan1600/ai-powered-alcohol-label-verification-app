@@ -9,7 +9,6 @@ import {
   diffSegments,
   FIELD_LABELS,
   FIELD_VERDICT_LABELS,
-  OVERRIDE_CHOICES,
   STATUS_SUMMARY,
   traversal,
 } from './review'
@@ -111,17 +110,11 @@ describe('copy tables', () => {
     expect(Object.keys(FIELD_VERDICT_LABELS)).toHaveLength(3)
   })
 
-  it('never offers unreadable as an override, since it describes the photograph', () => {
-    expect(OVERRIDE_CHOICES).not.toContain('unreadable')
-    expect(OVERRIDE_CHOICES).toHaveLength(3)
-  })
 })
 
 describe('decisionSummary', () => {
-  it('reads back a confirm and an override in the agent’s own terms', () => {
-    expect(decisionSummary({ kind: 'confirmed' })).toContain('confirmed')
-    expect(decisionSummary({ kind: 'overridden', corrected: 'problem_found' })).toContain(
-      'a problem found',
-    )
+  it('reads back accepted and rejected outcomes in the reviewer’s own terms', () => {
+    expect(decisionSummary({ outcome: 'accepted' })).toContain('accepted')
+    expect(decisionSummary({ outcome: 'rejected' })).toContain('rejected')
   })
 })

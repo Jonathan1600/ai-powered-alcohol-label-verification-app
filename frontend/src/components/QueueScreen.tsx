@@ -7,7 +7,7 @@ import type { QueueItem } from '../lib/contracts'
 import { downloadCsv, exportCsv, exportFilename } from '../lib/export'
 import { revokeItemUrls } from '../lib/ingest'
 import { applyOrder, awaitingCheck, cardStatus, sameOrder, sortQueue, STATUS_LABELS } from '../lib/queue'
-import { DECISION_LABELS } from '../lib/review'
+import { decisionLabel } from '../lib/review'
 import {
   dashboardUrl,
   isReviewHistoryState,
@@ -290,9 +290,9 @@ function QueueScreen() {
     stopRef.current?.abort()
   }
 
-  function handleConfirmClean(ids: string[]) {
-    dispatch({ type: 'decide-many', ids, decision: { kind: 'confirmed' } })
-    setAnnouncement(`${ids.length} clean matches confirmed.`)
+  function handleAcceptClean(ids: string[]) {
+    dispatch({ type: 'decide-many', ids, decision: { outcome: 'accepted' } })
+    setAnnouncement(`${ids.length} clean matches accepted.`)
   }
 
   function handleExport() {
@@ -335,7 +335,7 @@ function QueueScreen() {
 
   function handleDecide(id: string, decision: Decision) {
     dispatch({ type: 'decide', id, decision })
-    setAnnouncement(`Decision recorded: ${DECISION_LABELS[decision.kind].toLowerCase()}.`)
+    setAnnouncement(`Reviewer outcome recorded: ${decisionLabel(decision).toLowerCase()}.`)
   }
 
   function handleReset() {
@@ -428,7 +428,7 @@ function QueueScreen() {
             session={session}
             onVerifyMany={(ids) => void runBatchFor(ids)}
             onStop={handleStop}
-            onConfirmClean={handleConfirmClean}
+            onAcceptClean={handleAcceptClean}
             onExport={handleExport}
             onSetSelection={(ids) => dispatch({ type: 'set-selection', ids })}
             onAddLabels={() => setAdding(true)}

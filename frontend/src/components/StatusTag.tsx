@@ -4,7 +4,7 @@ import type { IconProps } from '@trussworks/react-uswds'
 
 import type { FieldVerdict } from '../lib/contracts'
 import { STATUS_LABELS, type CardStatus } from '../lib/queue'
-import { FIELD_VERDICT_LABELS } from '../lib/review'
+import { FIELD_VERDICT_LABELS, REVIEW_OUTCOME_LABELS } from '../lib/review'
 
 interface TagStyle {
   className: string
@@ -39,6 +39,11 @@ const FIELD_VERDICT_STYLES: Record<FieldVerdict, TagStyle> = {
   mismatch: { className: 'bg-secondary-dark text-white', Glyph: Icon.Error },
 }
 
+const REVIEW_OUTCOME_STYLES: Record<'accepted' | 'rejected', TagStyle> = {
+  accepted: { className: 'bg-success-dark text-white', Glyph: Icon.CheckCircle },
+  rejected: { className: 'bg-secondary-dark text-white', Glyph: Icon.Error },
+}
+
 function StatusTag({ status }: { status: CardStatus }) {
   const { className, Glyph, spin } = STATUS_STYLES[status]
   return (
@@ -55,6 +60,16 @@ export function FieldVerdictTag({ verdict }: { verdict: FieldVerdict }) {
     <Tag className={`${TAG_CLASSES} ${className}`}>
       <Glyph aria-hidden className="margin-right-05" />
       {FIELD_VERDICT_LABELS[verdict]}
+    </Tag>
+  )
+}
+
+export function ReviewerOutcomeTag({ outcome }: { outcome: 'accepted' | 'rejected' }) {
+  const { className, Glyph } = REVIEW_OUTCOME_STYLES[outcome]
+  return (
+    <Tag className={`${TAG_CLASSES} ${className}`}>
+      <Glyph aria-hidden className="margin-right-05" />
+      {REVIEW_OUTCOME_LABELS[outcome]}
     </Tag>
   )
 }

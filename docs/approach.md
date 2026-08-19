@@ -74,16 +74,19 @@ This is the right model, and it does not conflict with the evaluation criteria:
 
 Practical consequences for the build:
 
-- Vocabulary avoids "approved" and "rejected." Results read as recommendations:
-  **Looks correct** / **Needs review** / **Problem found**.
+- System results remain evidence: **Looks correct** / **Needs review** /
+  **Problem found**. For any completed result, the reviewer may leave that
+  finding unchanged or record an **Accepted** or **Rejected** outcome; the
+  system finding and evidence remain visible.
 - The review queue sorts problems and review items to the top. That ordering
   *is* the agent's work queue.
-- Each item carries a confirm or override control. Clean matches support bulk
-  confirm so a 300-item batch does not require 300 individual clicks.
-- Overrides are the honest measure of accuracy. In production, logging the
-  override rate per field is how you would prove the tool works. For this
-  prototype the system is stateless, so overrides live in session state and
-  flow into the CSV export rather than a database.
+- Every completed item carries explicit Accept and Reject controls. Clean
+  matches support bulk accept so a 300-item batch does not require 300
+  individual clicks.
+- Reviewer outcomes are the honest measure of accuracy. In production, logging
+  outcome disagreement with the system finding per field is how you would prove
+  the tool works. For this prototype they live in session state and flow into
+  the CSV export rather than a database.
 
 ### 3.1 The user is the reviewer, not the applicant
 
@@ -253,12 +256,13 @@ someone who thinks about the work visually.
 
 **The review view**, reached by clicking a card: a large status banner, then a
 three-column table of "Application said" / "Label shows" / status, with a
-plain-English reason per row and a confirm or override control. The label image
-sits alongside. No confidence decimals shown to the user. Next and previous
-controls move through the queue without returning to it, since an agent working
-a stack should not have to navigate back after every item. The browser's Back
-and Forward controls return to the queue and reopen the last review item;
-the review URL is represented as `?review=<item-id>`.
+plain-English reason per row and Accept or Reject controls for every completed
+result. Leaving without a reviewer action retains the system finding. The label
+image sits alongside. No confidence decimals shown to the user. Next and
+previous controls move through the queue without returning to it, since an
+agent working a stack should not have to navigate back after every item. The
+browser's Back and Forward controls return to the queue and reopen the last
+review item; the review URL is represented as `?review=<item-id>`.
 
 Built with USWDS, which carries real advantages here beyond looking like a
 government product:
@@ -345,9 +349,9 @@ Ingestion for new work is images plus a CSV of application rows, matched by
 filename convention, validated all-or-nothing with every problem reported at
 once. Added labels live entirely in the browser and post to the same verify
 endpoint as seeded fixtures; there is no upload endpoint and no server-side
-ingestion state (ADR-014). Bulk confirm for clean matches, restricted to
+ingestion state (ADR-014). Bulk accept for clean matches, restricted to
 "looks correct" so a batch control can never sweep up a compliance finding.
-CSV export of the whole queue including any agent overrides, with
+CSV export of the whole queue including any reviewer outcomes, with
 formula-leading cells neutralised so a note typed by an agent cannot execute in
 someone else's spreadsheet.
 
@@ -398,7 +402,7 @@ time from section 6.
 
 A single button on the queue screen restores the
 original seeded state: all items return to "not yet checked," verdicts and
-confirms and overrides are discarded, and anything added through the
+reviewer outcomes are discarded, and anything added through the
 add-labels path is cleared.
 
 This matters because the intended audience runs the demo more than once. An
@@ -702,8 +706,8 @@ to prove out.
 4. LabelReader adapter and the single-label endpoint with real `gpt-4.1-mini`
    calls and latency instrumentation.
 5. Review queue screen seeded from fixtures, with the reset control, plus the
-   review view with confirm/override.
-6. Batch verification across selected items, streamed progress, bulk confirm,
+   review view with accepted/rejected reviewer outcomes.
+6. Batch verification across selected items, streamed progress, bulk accept,
    CSV export, and the add-labels ingestion path.
 7. Evaluation script, the two CI jobs with the blocking p95 latency gate,
    README, unreadable-path polish.

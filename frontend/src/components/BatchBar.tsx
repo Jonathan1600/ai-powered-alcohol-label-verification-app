@@ -11,7 +11,7 @@ import {
 import type { ModalRef } from '@trussworks/react-uswds'
 
 import type { QueueItem } from '../lib/contracts'
-import { bulkConfirmable } from '../lib/export'
+import { bulkAcceptable } from '../lib/export'
 import { awaitingCheck, cardStatus } from '../lib/queue'
 import { batchProgress, selectedIds, type SessionState } from '../lib/session'
 
@@ -31,7 +31,7 @@ interface BatchBarProps {
   session: SessionState
   onVerifyMany: (ids: string[]) => void
   onStop: () => void
-  onConfirmClean: (ids: string[]) => void
+  onAcceptClean: (ids: string[]) => void
   onExport: () => void
   onSetSelection: (ids: string[]) => void
   onAddLabels: () => void
@@ -55,7 +55,7 @@ function BatchBar({
   session,
   onVerifyMany,
   onStop,
-  onConfirmClean,
+  onAcceptClean,
   onExport,
   onSetSelection,
   onAddLabels,
@@ -63,7 +63,7 @@ function BatchBar({
   sortStale,
 }: BatchBarProps) {
   const verifyModal = useRef<ModalRef>(null)
-  const confirmModal = useRef<ModalRef>(null)
+  const acceptModal = useRef<ModalRef>(null)
   const [pending, setPending] = useState<string[]>([])
 
   const running = session.batch.running
@@ -75,7 +75,7 @@ function BatchBar({
   const selected = selectedIds(session, items)
   const selectedSet = new Set(selected)
   const selectedUnchecked = unchecked.filter((id) => selectedSet.has(id))
-  const confirmable = bulkConfirmable(items, session)
+  const acceptable = bulkAcceptable(items, session)
 
   function startVerifying(ids: string[]) {
     if (ids.length === 0) return
@@ -171,10 +171,10 @@ function BatchBar({
           <Button
             type="button"
             outline
-            disabled={confirmable.length === 0}
-            onClick={() => confirmModal.current?.toggleModal(undefined, true)}
+            disabled={acceptable.length === 0}
+            onClick={() => acceptModal.current?.toggleModal(undefined, true)}
           >
-            Confirm {confirmable.length} clean matches
+            Accept {acceptable.length} clean matches
           </Button>
         </ButtonGroup>
 
@@ -253,31 +253,30 @@ function BatchBar({
       </Modal>
 
       <Modal
-        ref={confirmModal}
-        id="bulk-confirm-modal"
-        aria-labelledby="bulk-confirm-heading"
-        aria-describedby="bulk-confirm-description"
+        ref={acceptModal}
+        id="bulk-accept-modal"
+        aria-labelledby="bulk-accept-heading"
+        aria-describedby="bulk-accept-description"
       >
-        <ModalHeading id="bulk-confirm-heading">
-          Confirm {confirmable.length} clean matches?
+        <ModalHeading id="bulk-accept-heading">
+          Accept {acceptable.length} clean matches?
         </ModalHeading>
         <div className="usa-prose">
-          <p id="bulk-confirm-description">
-            This records your agreement with the recommendation on every application the check found
-            nothing wrong with. Nothing that needs review or has a problem found is included. You
-            can change any of them afterwards.
+          <p id="bulk-accept-description">
+            This records Accepted on every application the check found nothing wrong with. Nothing
+            that needs review or has a problem found is included. You can change any outcome later.
           </p>
         </div>
         <ModalFooter>
           <ButtonGroup>
             <ModalToggleButton
-              modalRef={confirmModal}
+              modalRef={acceptModal}
               closer
-              onClick={() => onConfirmClean(confirmable)}
+              onClick={() => onAcceptClean(acceptable)}
             >
-              Yes, confirm them
+              Yes, accept them
             </ModalToggleButton>
-            <ModalToggleButton modalRef={confirmModal} closer unstyled>
+            <ModalToggleButton modalRef={acceptModal} closer unstyled>
               Cancel
             </ModalToggleButton>
           </ButtonGroup>

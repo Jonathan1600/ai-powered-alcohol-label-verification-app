@@ -9,14 +9,13 @@ import {
   CardMedia,
   Checkbox,
   Icon,
-  Tag,
 } from '@trussworks/react-uswds'
 
 import type { QueueItem } from '../lib/contracts'
 import { cardStatus } from '../lib/queue'
-import { DECISION_LABELS, failureMessage, unreadableGuidance } from '../lib/review'
+import { failureMessage, unreadableGuidance } from '../lib/review'
 import type { Decision, ItemCheck } from '../lib/session'
-import StatusTag from './StatusTag'
+import StatusTag, { ReviewerOutcomeTag } from './StatusTag'
 
 interface QueueCardProps {
   item: QueueItem
@@ -51,6 +50,7 @@ function QueueCard({
   const result = check?.phase === 'done' ? check.response.result : null
   const unreadable = result?.status === 'unreadable'
   const unreadableReason = unreadable ? result.unreadable_reason : null
+  const reviewerOutcome = decision?.outcome ?? null
   // The action is offered until a verdict exists; a failure leaves the item
   // unchecked, so the button comes back for a retry.
   const showVerify = status === 'not_yet_checked' || busy
@@ -129,12 +129,10 @@ function QueueCard({
           }
         />
         <div className="display-flex flex-wrap flex-align-center margin-bottom-05">
-          <StatusTag status={status} />
-          {decision && (
-            <Tag className="display-inline-flex flex-align-center text-no-uppercase font-body-sm padding-y-05 padding-x-1 margin-left-1 bg-white border border-base text-ink">
-              <Icon.Check aria-hidden className="margin-right-05" />
-              {DECISION_LABELS[decision.kind]}
-            </Tag>
+          {reviewerOutcome ? (
+            <ReviewerOutcomeTag outcome={reviewerOutcome} />
+          ) : (
+            <StatusTag status={status} />
           )}
         </div>
         {unreadable && (

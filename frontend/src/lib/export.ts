@@ -1,10 +1,9 @@
 // The CSV export: the whole queue, what the tool recommended, and what the
 // agent decided about it.
 //
-// The overrides are the reason this exists. approach.md section 3 names them as
-// the honest measure of accuracy, and this prototype has no database, so the
-// only way an override leaves the browser is through this file. Everything else
-// here is context that makes an override interpretable six months later:
+// Reviewer outcomes are the reason this exists. This prototype has no database,
+// so the only way a decision leaves the browser is through this file. Everything
+// else here is context that makes that outcome interpretable six months later:
 // which model, which prompt, how long it took.
 //
 // Wide format, one row per application, one column per field verdict. Long
@@ -14,8 +13,8 @@
 import type { FieldName, QueueItem } from './contracts'
 import { serializeCsv } from './csv'
 import { cardStatus, STATUS_LABELS } from './queue'
-import { FIELD_VERDICT_LABELS } from './review'
-import type { SessionState } from './session'
+import { decisionLabel, FIELD_VERDICT_LABELS } from './review'
+import type { Decision, SessionState } from './session'
 
 // Every field the engine can report on, in the order the review table shows
 // them, so the export reads the way the screen does.
@@ -35,17 +34,15 @@ export const EXPORT_HEADER: string[] = [
   'source',
   'recommendation',
   ...FIELD_ORDER.map((field) => `${field}_verdict`),
-  'agent_decision',
-  'agent_corrected_to',
+  'reviewer_outcome',
   'agent_note',
   'model',
   'prompt_version',
   'server_total_ms',
 ]
 
-const DECISION_WORDS: Record<'confirmed' | 'overridden', string> = {
-  confirmed: 'Confirmed',
-  overridden: 'Overridden',
+function decisionNote(decision: Decision | undefined): string {
+  return decision?.note ?? ''
 }
 
 /**
@@ -78,9 +75,8 @@ export function exportRows(items: readonly QueueItem[], session: SessionState): 
         const verdict = verdicts.get(field)
         return verdict ? FIELD_VERDICT_LABELS[verdict] : ''
       }),
-      decision ? DECISION_WORDS[decision.kind] : '',
-      decision?.kind === 'overridden' ? STATUS_LABELS[decision.corrected] : '',
-      decision?.kind === 'overridden' ? (decision.note ?? '') : '',
+      decision ? decisionLabel(decision) : '',
+      decisionNote(decision),
       response?.model ?? '',
       response?.prompt_version ?? '',
       response ? String(Math.round(response.timings.server_total_ms)) : '',
@@ -128,13 +124,13 @@ export function downloadCsv(text: string, filename: string): void {
 }
 
 /**
- * The items a bulk confirm would act on: clean matches nobody has decided yet.
+ * The items a bulk accept would act on: clean matches nobody has decided yet.
  *
  * Deliberately only `looks_correct`. A bulk control that could sweep up a
  * problem found is a control that turns a compliance finding into a rubber
  * stamp, and the whole design rests on the agent deciding (ADR-003).
  */
-export function bulkConfirmable(items: readonly QueueItem[], session: SessionState): string[] {
+export function bulkAcceptable(items: readonly QueueItem[], session: SessionState): string[] {
   return items
     .filter(
       (item) =>

@@ -68,24 +68,24 @@ describe('sortQueue', () => {
       b: done('problem_found'),
       c: done('problem_found'),
     }
-    const decisions: DecisionState = { a: { kind: 'confirmed' } }
+    const decisions: DecisionState = { a: { outcome: 'accepted' } }
     expect(sortQueue(items, checks, decisions).map((i) => i.id)).toEqual(['b', 'c', 'a'])
   })
 
   it('never lifts a decided item above a worse status', () => {
-    // A confirmed problem still outranks an undecided clean pass: the sort is
+    // An accepted problem still outranks an undecided clean pass: the sort is
     // about attention first and completion second.
     const items = [seedItem('a'), seedItem('b')]
     const checks: CheckState = { a: done('looks_correct'), b: done('problem_found') }
-    const decisions: DecisionState = { b: { kind: 'confirmed' } }
+    const decisions: DecisionState = { b: { outcome: 'accepted' } }
     expect(sortQueue(items, checks, decisions).map((i) => i.id)).toEqual(['b', 'a'])
   })
 
-  it('treats an override the same as a confirm for ordering', () => {
+  it('orders a rejected outcome the same as an accepted outcome', () => {
     const items = [seedItem('a'), seedItem('b')]
     const checks: CheckState = { a: done('needs_review'), b: done('needs_review') }
     const decisions: DecisionState = {
-      a: { kind: 'overridden', corrected: 'looks_correct' },
+      a: { outcome: 'rejected' },
     }
     expect(sortQueue(items, checks, decisions).map((i) => i.id)).toEqual(['b', 'a'])
   })

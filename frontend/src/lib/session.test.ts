@@ -55,7 +55,7 @@ describe('sessionReducer: verification', () => {
     const decided = sessionReducer(
       session({
         checks: { a: { phase: 'done', response } },
-        decisions: { a: { kind: 'confirmed' } },
+        decisions: { a: { outcome: 'accepted' } },
       }),
       { type: 'verify-started', id: 'a' },
     )
@@ -72,42 +72,51 @@ describe('sessionReducer: verification', () => {
 })
 
 describe('sessionReducer: decisions', () => {
-  it('records a confirm and an override with the corrected status', () => {
+  it('records accepted and rejected reviewer outcomes', () => {
     let state = sessionReducer(EMPTY_SESSION, {
       type: 'decide',
       id: 'a',
-      decision: { kind: 'confirmed' },
+      decision: { outcome: 'accepted' },
     })
-    expect(state.decisions.a).toEqual({ kind: 'confirmed' })
+    expect(state.decisions.a).toEqual({ outcome: 'accepted' })
 
     state = sessionReducer(state, {
       type: 'decide',
       id: 'b',
-      decision: { kind: 'overridden', corrected: 'looks_correct', note: 'Vintage differs, not ABV.' },
+      decision: { outcome: 'rejected', note: 'Vintage differs, not ABV.' },
     })
     expect(state.decisions.b).toEqual({
-      kind: 'overridden',
-      corrected: 'looks_correct',
+      outcome: 'rejected',
       note: 'Vintage differs, not ABV.',
+    })
+
+    state = sessionReducer(state, {
+      type: 'decide',
+      id: 'c',
+      decision: { outcome: 'accepted', note: 'Warning type is too small.' },
+    })
+    expect(state.decisions.c).toEqual({
+      outcome: 'accepted',
+      note: 'Warning type is too small.',
     })
   })
 
-  it('records the same decision across many items for a bulk confirm', () => {
+  it('records the same decision across many items for a bulk acceptance', () => {
     const state = sessionReducer(EMPTY_SESSION, {
       type: 'decide-many',
       ids: ['a', 'b', 'c'],
-      decision: { kind: 'confirmed' },
+      decision: { outcome: 'accepted' },
     })
     expect(state.decisions).toEqual({
-      a: { kind: 'confirmed' },
-      b: { kind: 'confirmed' },
-      c: { kind: 'confirmed' },
+      a: { outcome: 'accepted' },
+      b: { outcome: 'accepted' },
+      c: { outcome: 'accepted' },
     })
   })
 
-  it('leaves the store identical when a bulk confirm has nothing to confirm', () => {
-    const initial = session({ decisions: { a: { kind: 'confirmed' } } })
-    expect(sessionReducer(initial, { type: 'decide-many', ids: [], decision: { kind: 'confirmed' } }))
+  it('leaves the store identical when a bulk accept has nothing to accept', () => {
+    const initial = session({ decisions: { a: { outcome: 'accepted' } } })
+    expect(sessionReducer(initial, { type: 'decide-many', ids: [], decision: { outcome: 'accepted' } }))
       .toBe(initial)
   })
 
@@ -115,7 +124,7 @@ describe('sessionReducer: decisions', () => {
     const state = sessionReducer(
       session({
         checks: { a: { phase: 'done', response } },
-        decisions: { a: { kind: 'confirmed' } },
+        decisions: { a: { outcome: 'accepted' } },
       }),
       { type: 'clear-decision', id: 'a' },
     )
@@ -124,7 +133,7 @@ describe('sessionReducer: decisions', () => {
   })
 
   it('is a no-op on an item that was never decided', () => {
-    const initial = session({ decisions: { a: { kind: 'confirmed' } } })
+    const initial = session({ decisions: { a: { outcome: 'accepted' } } })
     const next = sessionReducer(initial, { type: 'clear-decision', id: 'zzz' })
     expect(next.decisions).toBe(initial.decisions)
   })
@@ -176,12 +185,12 @@ describe('sessionReducer: batch', () => {
     const state = sessionReducer(
       session({
         checks: { done: { phase: 'done', response } },
-        decisions: { fresh: { kind: 'confirmed' }, done: { kind: 'confirmed' } },
+        decisions: { fresh: { outcome: 'accepted' }, done: { outcome: 'accepted' } },
       }),
       { type: 'batch-started', ids: ['fresh', 'done'] },
     )
     expect(state.decisions.fresh).toBeUndefined()
-    expect(state.decisions.done).toEqual({ kind: 'confirmed' })
+    expect(state.decisions.done).toEqual({ outcome: 'accepted' })
   })
 
   it('clears whatever is still queued when the run ends, and records why', () => {
@@ -252,7 +261,7 @@ describe('sessionReducer: reset', () => {
     const state = session({
       added: [addedItem('x')],
       checks: { a: { phase: 'done', response }, b: { phase: 'checking' } },
-      decisions: { a: { kind: 'overridden', corrected: 'looks_correct' } },
+      decisions: { a: { outcome: 'rejected' } },
       selection: { a: true },
       batch: { ids: ['a', 'b'], running: false, stopped: 'agent' },
     })
@@ -267,7 +276,7 @@ describe('hasWork', () => {
 
   it('is true once anything has been checked, decided, or added', () => {
     expect(hasWork(session({ checks: { a: { phase: 'checking' } } }))).toBe(true)
-    expect(hasWork(session({ decisions: { a: { kind: 'confirmed' } } }))).toBe(true)
+    expect(hasWork(session({ decisions: { a: { outcome: 'accepted' } } }))).toBe(true)
     // Added labels are work too: a reset throws away an ingestion the agent
     // would have to redo file by file.
     expect(hasWork(session({ added: [addedItem('x')] }))).toBe(true)

@@ -26,11 +26,11 @@ export const FIELD_LABELS: Record<FieldName, string> = {
   government_warning: 'Government warning',
 }
 
-// One plain sentence per outcome, for the banner at the top of the review. The
-// vocabulary stays recommendation-shaped: nothing here says approved or
-// rejected, because the agent decides (ADR-003).
+// One plain sentence per outcome, for the banner at the top of the review.
+// System results remain evidence. A reviewer may leave that result unchanged or
+// record the final Accepted/Rejected outcome independently of the triage label.
 export const STATUS_SUMMARY: Record<VerdictStatus, string> = {
-  looks_correct: 'Every field checked matches the application. Confirm to finish this item.',
+  looks_correct: 'Every field checked matches the application.',
   needs_review: 'Something on this label needs your judgement before the application moves on.',
   problem_found: 'At least one field disagrees with the application, or a required statement is wrong.',
   unreadable: 'The label could not be read, so nothing was compared. A better photograph is needed.',
@@ -181,30 +181,18 @@ export function failureMessage(failure: VerifyFailure): string {
   }
 }
 
-export const DECISION_LABELS: Record<Decision['kind'], string> = {
-  confirmed: 'Confirmed',
-  overridden: 'Overridden',
+export const REVIEW_OUTCOME_LABELS: Record<Decision['outcome'], string> = {
+  accepted: 'Accepted',
+  rejected: 'Rejected',
+}
+
+export function decisionLabel(decision: Decision): string {
+  return REVIEW_OUTCOME_LABELS[decision.outcome]
 }
 
 // What the queue card and the review view say about a decision already made.
 // Reads back the agent's own action so a returning reviewer can tell at a
 // glance whether they agreed with the tool or corrected it.
 export function decisionSummary(decision: Decision): string {
-  if (decision.kind === 'confirmed') return 'You confirmed this recommendation.'
-  return `You recorded this as ${STATUS_LABELS_LOWER[decision.corrected]} instead.`
+  return `You ${decision.outcome === 'accepted' ? 'accepted' : 'rejected'} this application.`
 }
-
-// Mid-sentence forms of the four verdicts, so the summary above reads as
-// English rather than as a badge dropped into a sentence.
-const STATUS_LABELS_LOWER: Record<VerdictStatus, string> = {
-  looks_correct: 'looks correct',
-  needs_review: 'needs review',
-  problem_found: 'a problem found',
-  unreadable: 'unreadable',
-}
-
-// The three outcomes an agent can choose when overriding. Unreadable is not
-// among them: it describes the photograph rather than the application, and an
-// agent who thinks the image is unusable requests a better one rather than
-// recording a compliance judgement.
-export const OVERRIDE_CHOICES: VerdictStatus[] = ['looks_correct', 'needs_review', 'problem_found']
