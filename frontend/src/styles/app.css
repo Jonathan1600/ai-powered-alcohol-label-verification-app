@@ -42,12 +42,109 @@
   }
 }
 
-/* Fixtures are 900x1200 portrait; a fixed aspect box keeps grid rows even. */
+/* A review row uses the USWDS card parts but has five deliberate scan zones:
+   selection, thumbnail, identity, review state, and actions. The grid is
+   limited to this application-specific balance; USWDS still supplies the
+   card, controls, tokens, and responsive type. */
+.queue-list > .queue-card {
+  width: 100%;
+}
+
+.queue-card {
+  margin-bottom: 1rem;
+}
+
+.queue-card .usa-card__container {
+  display: grid;
+  grid-template-columns: 6rem 5rem minmax(0, 1fr) minmax(9rem, max-content) max-content;
+  grid-template-areas: 'selection media identity state actions';
+  align-items: center;
+}
+
+.queue-card__selection {
+  grid-area: selection;
+  padding-left: 1rem;
+}
+
+.queue-card .usa-card__media {
+  grid-area: media;
+  order: initial;
+  width: 5rem;
+  height: 6.5rem;
+  margin-left: 1rem;
+  overflow: hidden;
+}
+
+.queue-card__identity {
+  grid-area: identity;
+  min-width: 0;
+  padding: 1rem 1.5rem;
+}
+
+.queue-card__state {
+  grid-area: state;
+  padding: 1rem 1rem 1rem 0;
+}
+
+.queue-card__actions {
+  grid-area: actions;
+  margin: 0;
+  padding: 1rem 1.5rem 1rem 0;
+}
+
+/* Fixtures are 900x1200 portrait. The compact thumbnail is deliberately
+   cropped rather than enlarged so a reviewer can scan the queue quickly. */
 .queue-card__thumb {
-  aspect-ratio: 3 / 4;
+  height: 100%;
   object-fit: cover;
   width: 100%;
   display: block;
+}
+
+.queue-card .usa-card__img {
+  width: 100%;
+  height: 100%;
+}
+
+/* At phone widths, the actions use the full row below the identity and state.
+   This preserves comfortable USWDS button targets without horizontal scrolling. */
+@media (max-width: 39.99em) {
+  .queue-card .usa-card__container {
+    grid-template-columns: 5.5rem 4rem minmax(0, 1fr);
+    grid-template-areas:
+      'selection media identity'
+      '. state state'
+      'actions actions actions';
+    align-items: start;
+  }
+
+  .queue-card__selection {
+    padding-top: 1rem;
+    padding-left: 0.75rem;
+  }
+
+  .queue-card .usa-card__media {
+    width: 4rem;
+    height: 5.5rem;
+    margin-top: 1rem;
+    margin-left: 0.75rem;
+  }
+
+  .queue-card__state {
+    padding: 0 1rem 1rem;
+  }
+
+  .queue-card__actions {
+    padding: 0 1rem 1rem;
+  }
+
+  .queue-card__actions .usa-button-group {
+    flex-wrap: wrap;
+  }
+
+  .queue-card__identity {
+    padding: 1rem;
+  }
 }
 
 /* The card heading is a button, so it inherits the button reset. Put the

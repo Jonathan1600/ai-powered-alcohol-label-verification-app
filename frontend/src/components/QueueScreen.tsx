@@ -442,7 +442,7 @@ function QueueScreen() {
               onClose={() => setAdding(false)}
             />
           )}
-          <CardGroup>
+          <CardGroup className="queue-list">
             {applyOrder(items, displayOrder).map((item) => (
               // Keyed by id so React moves DOM nodes on re-sort instead of
               // remounting, preserving focus and in-flight button state.
