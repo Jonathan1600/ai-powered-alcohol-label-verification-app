@@ -51,8 +51,13 @@ export type FieldName =
 
 export type UnreadableReason = 'glare' | 'angle' | 'blur' | 'resolution'
 
+// difflib's opcode vocabulary, passed through unchanged by the backend's
+// `word_diff`. `equal` runs travel too: the review view marks the edits inside
+// the statutory text, so it needs the words between them.
+export type DiffOpKind = 'equal' | 'replace' | 'delete' | 'insert'
+
 export interface DiffOp {
-  op: string
+  op: DiffOpKind
   expected: string
   actual: string
 }

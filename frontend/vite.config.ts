@@ -14,5 +14,7 @@ export default defineConfig({
     // see src/lib/downscale.test.ts for what that does and does not cover.
     environment: 'jsdom',
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    // jest-dom matchers and per-test DOM cleanup for the component suites.
+    setupFiles: ['src/test/setup.ts'],
   },
 })

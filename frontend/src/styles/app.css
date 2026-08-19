@@ -26,3 +26,68 @@
   width: 100%;
   display: block;
 }
+
+/* The card heading is a button, so it inherits the button reset. Put the
+   heading's own type back and keep it looking like a heading rather than a
+   link, since underlining every card title turns the grid into a wall of
+   rules. */
+.usa-card__heading > .usa-button {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  width: 100%;
+}
+
+.usa-card__heading > .usa-button:hover,
+.usa-card__heading > .usa-button:focus {
+  color: var(--uswds-primary, #005ea2);
+  text-decoration: underline;
+}
+
+/* The label stays beside the comparison while the agent reads down it. Sticky
+   only where there are two columns; on a phone the image is simply above the
+   table and scrolls away with everything else. */
+@media (min-width: 64em) {
+  .review-image {
+    position: sticky;
+    top: 1rem;
+  }
+}
+
+.review-image__img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Long extracted values (addresses, warning text) must wrap rather than force
+   the table wider than the screen. */
+.review-table td,
+.review-table th {
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+
+/* The diff. Color is the third signal here: the strikethrough, the underline,
+   and the visually hidden "removed"/"label says" words each carry the meaning
+   on their own, so the block still reads in greyscale and out loud. */
+.review-diff__removed {
+  background-color: #f8dfe2;
+  color: #5c1111;
+  text-decoration: line-through;
+  padding: 0 0.15em;
+}
+
+.review-diff__added {
+  background-color: #dbf2dc;
+  color: #154c21;
+  text-decoration: underline;
+  padding: 0 0.15em;
+}
+
+.review-diff__key del,
+.review-diff__key ins {
+  margin-right: 0.5rem;
+}

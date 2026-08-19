@@ -150,10 +150,39 @@ class TestTypeSizeThresholds:
 
 
 class TestWordDiff:
+    """The alignment the review view renders. Equal runs are part of the answer.
+
+    The client marks the edits inside the statutory text, so the unchanged words
+    either side of a change have to survive the trip.
+    """
+
     def test_replacement_is_reported(self):
         operations = word_diff("may cause health problems", "may cause serious health problems")
-        assert operations
-        assert operations[0].op in {"insert", "replace"}
+        changed = [operation for operation in operations if operation.op != "equal"]
+        assert changed
+        assert changed[0].op in {"insert", "replace"}
 
-    def test_identical_text_produces_no_operations(self):
-        assert word_diff(CANONICAL_WARNING, CANONICAL_WARNING) == []
+    def test_unchanged_words_surround_the_change(self):
+        operations = word_diff("may cause health problems", "may cause serious health problems")
+        assert operations[0].op == "equal"
+        assert operations[0].expected == "may cause"
+        assert operations[-1].op == "equal"
+        assert operations[-1].expected == "health problems"
+
+    def test_identical_text_produces_no_changes(self):
+        operations = word_diff(CANONICAL_WARNING, CANONICAL_WARNING)
+        assert all(operation.op == "equal" for operation in operations)
+
+    def test_capitalization_alone_is_not_a_wording_change(self):
+        """An all-capitals label is a caps question, reported by its own check.
+
+        Aligning case-sensitively would mark every word of such a label changed
+        and bury the one word that actually was.
+        """
+        shouted = CANONICAL_WARNING.upper().replace("MAY CAUSE", "CAN CAUSE")
+        changed = [
+            operation for operation in word_diff(CANONICAL_WARNING, shouted) if operation.op != "equal"
+        ]
+        assert len(changed) == 1
+        assert changed[0].expected == "may"
+        assert changed[0].actual == "CAN"
