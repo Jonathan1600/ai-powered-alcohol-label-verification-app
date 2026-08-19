@@ -63,6 +63,9 @@ describe('QueueScreen loading recovery', () => {
     await user.click(screen.getByRole('button', { name: 'Try again' }))
 
     expect(await screen.findByText('Retry Label')).toBeInTheDocument()
+    const queueList = document.querySelector<HTMLElement>('.queue-list')
+    expect(queueList).toBeInTheDocument()
+    expect(queueList?.querySelectorAll(':scope > .queue-card')).toHaveLength(1)
     expect(screen.queryByRole('heading', { name: 'Backend unreachable' })).not.toBeInTheDocument()
     expect(getSeedQueue).toHaveBeenCalledTimes(2)
   })

@@ -81,41 +81,15 @@ function QueueCard({
   }, [restoreFocus, onFocusRestored])
 
   return (
-    <Card gridLayout={{ tablet: { col: 6 }, desktop: { col: 4 } }}>
-      <CardHeader>
-        <h2 className="usa-card__heading font-heading-lg" tabIndex={-1} ref={headingRef}>
-          {/* The heading is the primary way into an item, which is what a card
-              grid leads a mouse user to click. A real button keeps it one tab
-              stop with an accessible name that already reads as the item. */}
-          <button
-            type="button"
-            ref={openRef}
-            className="usa-button usa-button--unstyled text-no-underline text-left"
-            onClick={() => onOpen(item)}
-          >
-            {item.brand_name}
-          </button>
-        </h2>
-      </CardHeader>
-      <CardMedia>
-        <img
-          src={item.thumbnailUrl}
-          alt={`Label photograph for ${item.brand_name}, ${item.application_reference}`}
-          loading="lazy"
-          className="queue-card__thumb"
-        />
-      </CardMedia>
-      <CardBody>
-        <p className="margin-top-0 margin-bottom-1 text-base-dark">{item.application_reference}</p>
-        {/* The visible word stays "Select" so 44 cards do not each shout their
-            own brand name down the page, while the hidden half gives the
-            checkbox an accessible name that identifies it in a screen reader's
-            form-controls list. Both live inside the one label, so the visible
-            text is a prefix of the accessible name and WCAG 2.5.3 holds. */}
+    <Card className="grid-col-12 queue-card">
+      <div className="queue-card__selection">
+        {/* The visible word stays "Select" so a mouse user can identify the
+            leading checkbox, while the hidden half distinguishes this item in
+            a screen reader's form-controls list. */}
         <Checkbox
           id={`select-${item.id}`}
           name="queue-selection"
-          className="margin-bottom-1"
+          className="margin-bottom-0"
           checked={selected}
           onChange={() => onToggleSelected(item.id)}
           label={
@@ -128,6 +102,43 @@ function QueueCard({
             </>
           }
         />
+      </div>
+      <CardMedia>
+        <img
+          src={item.thumbnailUrl}
+          alt={`Label photograph for ${item.brand_name}, ${item.application_reference}`}
+          loading="lazy"
+          className="queue-card__thumb"
+        />
+      </CardMedia>
+      <CardHeader className="queue-card__identity">
+        <h2 className="usa-card__heading font-heading-md" tabIndex={-1} ref={headingRef}>
+          {/* The heading is the primary way into an item. A real button keeps
+              it one tab stop with an accessible name that already reads as the
+              item. */}
+          <button
+            type="button"
+            ref={openRef}
+            className="usa-button usa-button--unstyled text-no-underline text-left"
+            onClick={() => onOpen(item)}
+          >
+            {item.brand_name}
+          </button>
+        </h2>
+        <p className="margin-top-05 margin-bottom-0 text-base-dark">{item.application_reference}</p>
+        {unreadable && (
+          <p className="margin-top-1 margin-bottom-0 font-body-sm text-base-dark">
+            {unreadableGuidance(unreadableReason)}
+          </p>
+        )}
+        {failure && (
+          <p className="margin-top-1 margin-bottom-0 font-body-sm text-secondary-dark">
+            <Icon.Error aria-hidden className="margin-right-05 text-middle" />
+            {failureMessage(failure)}
+          </p>
+        )}
+      </CardHeader>
+      <CardBody className="queue-card__state">
         <div className="display-flex flex-wrap flex-align-center margin-bottom-05">
           {reviewerOutcome ? (
             <ReviewerOutcomeTag outcome={reviewerOutcome} />
@@ -135,19 +146,8 @@ function QueueCard({
             <StatusTag status={status} />
           )}
         </div>
-        {unreadable && (
-          <p className="margin-bottom-0 font-body-sm text-base-dark">
-            {unreadableGuidance(unreadableReason)}
-          </p>
-        )}
-        {failure && (
-          <p className="margin-bottom-0 font-body-sm text-secondary-dark">
-            <Icon.Error aria-hidden className="margin-right-05 text-middle" />
-            {failureMessage(failure)}
-          </p>
-        )}
       </CardBody>
-      <CardFooter>
+      <CardFooter className="queue-card__actions">
         <ButtonGroup>
           {showVerify && (
             // aria-disabled rather than disabled: disabling the element that
