@@ -32,8 +32,9 @@ from pathlib import Path
 from typing import Any, Literal
 
 import httpx
+from dotenv import load_dotenv
 
-from app.config import get_settings
+from app.config import REPO_ROOT, get_settings
 from app.matching import verify
 from app.matching.contracts import ExtractedLabel, OverallStatus, VerificationResult
 from app.readers.openai_reader import build_reader
@@ -50,6 +51,12 @@ STATUS_ERROR_ALLOWANCE = 1
 FIELD_ERROR_ALLOWANCE = 5
 
 Target = Literal["local", "deployed"]
+
+# The API process loads the shared root .env in app.main. This command runs the
+# reader directly, so it must do the same before the SDK constructs its client.
+# Keep this beside the import path rather than relying on a caller to export the
+# key manually; tools.probe_extraction follows the identical convention.
+load_dotenv(REPO_ROOT / ".env")
 
 
 @dataclass
