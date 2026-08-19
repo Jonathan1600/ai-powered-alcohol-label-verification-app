@@ -1,0 +1,28 @@
+/* App-specific rules that USWDS utilities cannot express. Everything else
+   (spacing, color, type) stays on USWDS utility classes. */
+
+/* Spinner for the checking badge. The accessible signal is the visible
+   "Checking…" text and the screen's live region, not this animation. */
+@keyframes queue-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.queue-spin {
+  animation: queue-spin 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .queue-spin {
+    animation: none;
+  }
+}
+
+/* Fixtures are 900x1200 portrait; a fixed aspect box keeps grid rows even. */
+.queue-card__thumb {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  width: 100%;
+  display: block;
+}
