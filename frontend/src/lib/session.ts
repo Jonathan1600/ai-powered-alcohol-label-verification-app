@@ -15,7 +15,7 @@
 // dispatches.
 
 import type { VerifyFailure } from './api'
-import type { QueueItem, VerdictStatus, VerifyResponse } from './contracts'
+import type { QueueItem, VerifyResponse } from './contracts'
 
 // What the client knows about one item's verification. An absent entry means
 // unchecked. "failed" is a transport or provider failure, not a verdict
@@ -35,14 +35,10 @@ export type CheckState = Record<string, ItemCheck>
 
 // What the agent recorded about one item.
 //
-// A confirm agrees with the recommendation. An override says what the agent
-// believes instead, and it carries that corrected status rather than a bare
-// flag: "the agent disagreed" cannot be scored, while "the tool said problem
-// found and the agent said looks correct" can. Overrides are the honest
-// accuracy measure in approach.md section 3, and the CSV export carries them.
-export type Decision =
-  | { kind: 'confirmed' }
-  | { kind: 'overridden'; corrected: VerdictStatus; note?: string }
+// No reviewer action leaves the system finding intact. When an agent does act,
+// their outcome is deliberately binary and independent from the model's
+// triage result; the CSV carries both pieces of information.
+export type Decision = { outcome: 'accepted' | 'rejected'; note?: string }
 
 export type DecisionState = Record<string, Decision>
 

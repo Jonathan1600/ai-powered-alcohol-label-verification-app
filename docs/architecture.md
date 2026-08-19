@@ -132,19 +132,21 @@ stateDiagram-v2
     Checking --> ProblemFound
     Checking --> Unreadable
     Unreadable --> NotChecked: better photo supplied
-    LooksCorrect --> Confirmed: agent confirms
-    NeedsReview --> Confirmed
-    ProblemFound --> Confirmed
-    LooksCorrect --> Overridden: agent disagrees
-    NeedsReview --> Overridden
-    ProblemFound --> Overridden
-    Confirmed --> [*]
-    Overridden --> [*]
+    LooksCorrect --> Accepted: reviewer accepts
+    NeedsReview --> Accepted: reviewer accepts
+    ProblemFound --> Accepted: reviewer accepts
+    Unreadable --> Accepted: reviewer accepts
+    LooksCorrect --> Rejected: reviewer rejects
+    NeedsReview --> Rejected: reviewer rejects
+    ProblemFound --> Rejected: reviewer rejects
+    Unreadable --> Rejected: reviewer rejects
+    Accepted --> [*]
+    Rejected --> [*]
 ```
 
 Every terminal state is reached by a human action, never by the system alone.
-The reset control returns all items to `NotChecked` and discards confirms and
-overrides.
+The reset control returns all items to `NotChecked` and discards reviewer
+outcomes.
 
 ---
 
@@ -206,7 +208,8 @@ test suite and an offline demo path for free.
 
 **Decision.** Every item resolves to `match`, `needs review`, or `mismatch`,
 and nothing is auto-approved or auto-rejected. The verdict sets triage
-priority, not outcome.
+priority, not outcome. A reviewer may record Accepted or Rejected after any
+completed result, or leave the system finding unchanged.
 
 **Why.** COLA approval is a legal action and this prototype has no authority
 over the system of record. Label review also genuinely requires judgment. The
@@ -252,9 +255,9 @@ state lives in browser session state.
 design property rather than a policy promise. It also gives per-evaluator
 session isolation and a trivial reset with no server-side state to unwind.
 
-**Cost.** Review progress does not survive a page reload, and override rates
-cannot be measured across sessions. Both are acceptable for a prototype and are
-noted as production gaps.
+**Cost.** Review progress does not survive a page reload, and reviewer outcome
+rates cannot be measured across sessions. Both are acceptable for a prototype
+and are noted as production gaps.
 
 ### ADR-007: Split deployment on an always-on backend
 

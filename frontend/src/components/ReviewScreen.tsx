@@ -165,7 +165,7 @@ function ReviewScreen({
         </Grid>
 
         <Grid tablet={{ col: 12 }} desktop={{ col: 8 }}>
-          {result && <StatusBanner status={result.status} />}
+          {result && <StatusBanner status={result.status} decision={decision} />}
 
           {busy && (
             <p className="font-body-lg">

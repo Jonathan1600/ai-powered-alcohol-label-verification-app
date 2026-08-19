@@ -1,10 +1,10 @@
-// The export is the only way an override leaves the browser, so the test that
-// matters is that a disagreement survives the round trip intact.
+// The export is the only way a reviewer outcome leaves the browser, so the
+// test that matters is that the outcome survives the round trip intact.
 
 import { describe, expect, it } from 'vitest'
 
 import { parseCsv } from './csv'
-import { bulkConfirmable, EXPORT_HEADER, exportCsv, exportFilename, exportRows } from './export'
+import { bulkAcceptable, EXPORT_HEADER, exportCsv, exportFilename, exportRows } from './export'
 import { EMPTY_SESSION, type SessionState } from './session'
 import { addedItem, doneCheck, fieldResult, seedItem } from '../test/fixtures'
 
@@ -45,32 +45,45 @@ describe('exportRows', () => {
     expect(rows[0].country_of_origin_verdict).toBe('')
   })
 
-  it('carries an override with the status the agent chose and their note', () => {
+  it('carries an accepted outcome and the reviewer note', () => {
     const rows = asObjects(
       exportCsv(
         [seedItem('a')],
         session({
           checks: { a: doneCheck('problem_found') },
           decisions: {
-            a: { kind: 'overridden', corrected: 'looks_correct', note: 'Vintage differs, not ABV.' },
+            a: { outcome: 'accepted', note: 'Vintage differs, not ABV.' },
           },
         }),
       ),
     )
-    expect(rows[0].agent_decision).toBe('Overridden')
-    expect(rows[0].agent_corrected_to).toBe('Looks correct')
+    expect(rows[0].reviewer_outcome).toBe('Accepted')
     expect(rows[0].agent_note).toBe('Vintage differs, not ABV.')
   })
 
-  it('leaves the corrected column empty on a confirm, which corrects nothing', () => {
+  it('carries a rejected outcome without a note', () => {
     const rows = asObjects(
       exportCsv(
         [seedItem('a')],
-        session({ checks: { a: doneCheck('looks_correct') }, decisions: { a: { kind: 'confirmed' } } }),
+        session({ checks: { a: doneCheck('looks_correct') }, decisions: { a: { outcome: 'rejected' } } }),
       ),
     )
-    expect(rows[0].agent_decision).toBe('Confirmed')
-    expect(rows[0].agent_corrected_to).toBe('')
+    expect(rows[0].reviewer_outcome).toBe('Rejected')
+    expect(rows[0].agent_note).toBe('')
+  })
+
+  it('carries a rejected outcome and optional note', () => {
+    const rows = asObjects(
+      exportCsv(
+        [seedItem('a')],
+        session({
+          checks: { a: doneCheck('needs_review') },
+          decisions: { a: { outcome: 'rejected', note: 'Warning typography needs correction.' } },
+        }),
+      ),
+    )
+    expect(rows[0].reviewer_outcome).toBe('Rejected')
+    expect(rows[0].agent_note).toBe('Warning typography needs correction.')
   })
 
   it('attributes a result to the model and prompt that produced it', () => {
@@ -92,7 +105,7 @@ describe('exportRows', () => {
       [seedItem('a')],
       session({
         checks: { a: doneCheck('problem_found') },
-        decisions: { a: { kind: 'overridden', corrected: 'looks_correct', note: '=HYPERLINK("x")' } },
+        decisions: { a: { outcome: 'accepted', note: '=HYPERLINK("x")' } },
       }),
     )
     expect(csv).toContain(`'=HYPERLINK`)
@@ -108,12 +121,12 @@ describe('exportFilename', () => {
   })
 })
 
-describe('bulkConfirmable', () => {
+describe('bulkAcceptable', () => {
   const items = [seedItem('clean'), seedItem('problem'), seedItem('decided'), seedItem('unchecked')]
 
   it('offers only the clean matches nobody has decided yet', () => {
     expect(
-      bulkConfirmable(
+      bulkAcceptable(
         items,
         session({
           checks: {
@@ -121,7 +134,7 @@ describe('bulkConfirmable', () => {
             problem: doneCheck('problem_found'),
             decided: doneCheck('looks_correct'),
           },
-          decisions: { decided: { kind: 'confirmed' } },
+          decisions: { decided: { outcome: 'accepted' } },
         }),
       ),
     ).toEqual(['clean'])
@@ -129,7 +142,7 @@ describe('bulkConfirmable', () => {
 
   it('never reaches a needs review or a problem found, whatever else is true', () => {
     expect(
-      bulkConfirmable(
+      bulkAcceptable(
         items,
         session({
           checks: { clean: doneCheck('needs_review'), problem: doneCheck('problem_found') },

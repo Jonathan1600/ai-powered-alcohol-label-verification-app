@@ -97,7 +97,7 @@ describe('states', () => {
     expect(
       screen.getByText('The application says 40% but the label reads 45%.'),
     ).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Record your decision' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Set reviewer outcome' })).toBeInTheDocument()
   })
 
   it('asks for a better photograph on an unreadable label and compares nothing', () => {
@@ -114,6 +114,17 @@ describe('states', () => {
     expect(screen.getByText(/Glare hides part of the label/)).toBeInTheDocument()
     // Nothing was compared, so there is no comparison to show.
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
+  it('shows a reviewer outcome in place of the raw system-status banner', () => {
+    renderReview({
+      check: doneCheck('problem_found', [fieldResult('brand_name', 'mismatch')]),
+      decision: { outcome: 'rejected' },
+    })
+
+    expect(screen.getByRole('heading', { name: 'Rejected' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Problem found' })).not.toBeInTheDocument()
+    expect(screen.getByText(/system finding and field evidence remain available/i)).toBeInTheDocument()
   })
 
   it('renders the word-level diff when the warning wording failed', () => {
@@ -172,51 +183,45 @@ describe('moving through the queue', () => {
 describe('recording a decision', () => {
   const checked = doneCheck('problem_found', [fieldResult('brand_name', 'mismatch')])
 
-  it('confirms the recommendation in one click', async () => {
+  it('records an accepted outcome for every completed result', async () => {
     const props = renderReview({ check: checked })
 
-    await userEvent.click(screen.getByRole('button', { name: /^Confirm/ }))
-    expect(props.onDecide).toHaveBeenCalledWith('b', { kind: 'confirmed' })
+    await userEvent.click(screen.getByRole('button', { name: 'Accept' }))
+    expect(props.onDecide).toHaveBeenCalledWith('b', { outcome: 'accepted', note: undefined })
   })
 
-  it('refuses to save an override that does not say what is correct', async () => {
-    const props = renderReview({ check: checked })
+  it('records a reviewer outcome for an item that needs review', async () => {
+    const props = renderReview({ check: doneCheck('needs_review') })
 
-    await userEvent.click(screen.getByRole('button', { name: 'I disagree' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Save decision' }))
-
-    expect(props.onDecide).not.toHaveBeenCalled()
-    expect(screen.getByText('Choose the result you believe is correct.')).toBeInTheDocument()
-    // Focus goes to the choices, not nowhere.
-    expect(screen.getByRole('radio', { name: 'Looks correct' })).toHaveFocus()
-  })
-
-  it('records the corrected status and the note, which is the accuracy signal', async () => {
-    const props = renderReview({ check: checked })
-
-    await userEvent.click(screen.getByRole('button', { name: 'I disagree' }))
-    await userEvent.click(screen.getByRole('radio', { name: 'Looks correct' }))
-    await userEvent.type(screen.getByLabelText(/Note/), 'The ABV difference is a rounding artefact.')
-    await userEvent.click(screen.getByRole('button', { name: 'Save decision' }))
+    expect(screen.getByRole('heading', { name: 'Set reviewer outcome' })).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Reviewer note (optional)'), 'Visual inspection confirmed the label.')
+    await userEvent.click(screen.getByRole('button', { name: 'Accept' }))
 
     expect(props.onDecide).toHaveBeenCalledWith('b', {
-      kind: 'overridden',
-      corrected: 'looks_correct',
-      note: 'The ABV difference is a rounding artefact.',
+      outcome: 'accepted',
+      note: 'Visual inspection confirmed the label.',
     })
+  })
+
+  it('allows a rejected outcome without a note', async () => {
+    const props = renderReview({ check: doneCheck('needs_review') })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reject' }))
+
+    expect(props.onDecide).toHaveBeenCalledWith('b', { outcome: 'rejected', note: undefined })
   })
 
   it('reads a recorded decision back and offers to change it', async () => {
     const props = renderReview({
       check: checked,
-      decision: { kind: 'overridden', corrected: 'looks_correct', note: 'Checked by hand.' },
+      decision: { outcome: 'accepted', note: 'Checked by hand.' },
     })
 
-    expect(screen.getByRole('heading', { name: /Decision recorded/ })).toBeInTheDocument()
-    expect(screen.getByText(/looks correct/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Reviewer outcome recorded/ })).toBeInTheDocument()
+    expect(screen.getByText(/accepted/)).toBeInTheDocument()
     expect(screen.getByText(/Checked by hand\./)).toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Change this decision' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Change outcome' }))
     expect(props.onClearDecision).toHaveBeenCalledWith('b')
   })
 })

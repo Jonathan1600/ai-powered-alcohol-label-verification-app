@@ -3,7 +3,8 @@ import type { AlertProps } from '@trussworks/react-uswds'
 
 import type { VerdictStatus } from '../lib/contracts'
 import { STATUS_LABELS } from '../lib/queue'
-import { STATUS_SUMMARY } from '../lib/review'
+import { REVIEW_OUTCOME_LABELS, STATUS_SUMMARY } from '../lib/review'
+import type { Decision } from '../lib/session'
 
 // The four outcomes mapped onto USWDS alert severities. The component carries
 // its own icon and its own heading text, so the meaning survives in greyscale
@@ -21,16 +22,24 @@ const BANNER_TYPE: Record<VerdictStatus, AlertProps['type']> = {
 
 interface StatusBannerProps {
   status: VerdictStatus
+  decision?: Decision
   children?: React.ReactNode
 }
 
-function StatusBanner({ status, children }: StatusBannerProps) {
+function StatusBanner({ status, decision, children }: StatusBannerProps) {
+  const reviewerOutcome = decision?.outcome ?? null
+  const bannerType = reviewerOutcome ? (reviewerOutcome === 'accepted' ? 'success' : 'error') : BANNER_TYPE[status]
+  const heading = reviewerOutcome ? REVIEW_OUTCOME_LABELS[reviewerOutcome] : STATUS_LABELS[status]
+  const summary = reviewerOutcome
+    ? `You recorded this reviewer outcome. The system finding and field evidence remain available below.`
+    : STATUS_SUMMARY[status]
+
   return (
-    <Alert type={BANNER_TYPE[status]} className="margin-top-0">
+    <Alert type={bannerType} className="margin-top-0">
       <AlertHeading level="h2" className="font-heading-lg">
-        {STATUS_LABELS[status]}
+        {heading}
       </AlertHeading>
-      <p className="margin-bottom-0">{STATUS_SUMMARY[status]}</p>
+      <p className="margin-bottom-0">{summary}</p>
       {children}
     </Alert>
   )
