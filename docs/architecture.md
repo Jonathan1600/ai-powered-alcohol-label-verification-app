@@ -362,3 +362,41 @@ would hide the outage from the only signal that would reveal it.
 **Cost.** Callers must handle a failure path distinct from the result path,
 including in batch, where phase 7 has to keep one failed item from reading as a
 compliance finding.
+
+### ADR-013: The queue order freezes while a batch runs
+
+**Decision.** During a batch, the grid keeps the order it had when the run
+started. Per-item results still land on their cards the moment they arrive, and
+a live counter reports how many problems have surfaced so far. The
+attention-needed sort is applied when the run finishes, or earlier if the agent
+presses "Sort by attention needed". This revises approach.md section 5.7, which
+originally promised a live re-sort on every arriving result.
+
+**Why.** With two hundred items in flight, a verdict lands every second or two,
+and each one would move cards under the agent's pointer and under a keyboard
+user's focus. A control that moves while being reached for is an accessibility
+failure before it is an annoyance. Problems still surface early, through the
+counter and the on-demand sort, rather than through motion.
+
+**Cost.** The screen holds a display order alongside the derived sort and must
+reconcile them at the end of a run. And the design in 5.7 as written was not
+built, which this record exists to say plainly.
+
+### ADR-014: Added labels never touch the server
+
+**Decision.** The add-labels path parses the CSV, validates every row, and
+builds queue items entirely in the browser. Images are held as `File` objects
+with object-URL thumbnails, and are posted to the same `POST /api/verify` as
+seeded fixtures at verification time. There is no upload endpoint and no
+server-side ingestion state.
+
+**Why.** ADR-006 rejected a database; an upload endpoint would have
+reintroduced one in disguise, as server state that outlives a request and must
+be reset per evaluator. Client-held files keep every evaluator's queue isolated
+for free, and the verify endpoint already accepts arbitrary images, so the
+server needed no change at all.
+
+**Cost.** Added labels do not survive a page reload, and the browser holds the
+image bytes for the life of the session, which is why the reset path revokes
+their object URLs. Both are prototype-shaped costs; a production ingestion is a
+different system and is recorded as such in approach.md section 5.7.

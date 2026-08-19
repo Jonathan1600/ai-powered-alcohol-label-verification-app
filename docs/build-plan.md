@@ -301,6 +301,27 @@ record a decision, move to the next, and reset the whole demo to run again.
 progress, problems surface while the rest is still running, and results export
 cleanly.
 
+**Delivered.** All six tasks, almost entirely in the frontend: the backend was
+already shaped for this (the verify endpoint's threadpool hop existed for
+exactly this phase) and needed no change. The pool runs 6 wide, abortable, with
+each result dispatched as it lands. Two decisions diverged from the plan as
+written and are recorded rather than slipped in:
+
+- **The grid does not re-sort during a run.** ADR-013. Problems surface through
+  a live counter and a sort-on-demand control; the attention-needed sort
+  applies on completion. Approach.md section 5.7 is revised accordingly.
+- **The 200-item scenario is reached through ingestion only.** The seed corpus
+  stays at 44 and is not synthetically repeated; a real batch is a real
+  ingestion of images plus a CSV, validated all-or-nothing with every problem
+  reported at once. Added labels never touch the server (ADR-014).
+
+Guardrails that earned their place: a confirmation before runs above 25 items
+(real money, real minutes), a circuit breaker after 5 consecutive provider
+failures, bulk confirm restricted to "looks correct", and CSV cells neutralised
+against formula injection. Session state moved from result-only to the full
+verify response so the export can attribute each verdict to the model and
+prompt that produced it, which phase 8 needs anyway.
+
 ---
 
 ## Phase 8: Evaluation script and the CI latency gate
