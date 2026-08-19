@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client'
 // both initializes components twice (ADR-010).
 import '@uswds/uswds/css/uswds.css'
 import '@trussworks/react-uswds/lib/index.css'
+import './styles/app.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
