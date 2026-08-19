@@ -124,11 +124,15 @@ Only after reviewing healthy reports, create the local baseline and then append
 the deployed baseline to the same committed file:
 
 ```bash
-uv run python -m tools.evaluate --target local --accept-baseline
+uv run python -m tools.evaluate --accept-report evaluation-report.json
 
 EVALUATION_API_BASE_URL=https://your-service.onrender.com \
-  uv run python -m tools.evaluate --target deployed --accept-baseline
+  uv run python -m tools.evaluate --target deployed --json-output deployed-evaluation-report.json
+uv run python -m tools.evaluate --accept-report deployed-evaluation-report.json
 ```
+
+The initial report-only run succeeds even without a baseline; CI still fails
+before making model calls until the approved file is committed.
 
 The baseline binds the manifest hash, model, and prompt version. It blocks unsafe
 false-clears, failed fixture calls, material accuracy regression, and p95 more

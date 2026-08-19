@@ -519,7 +519,9 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def print_summary(report: dict[str, Any], failures: list[str], warmup_error: str | None) -> None:
+def print_summary(
+    report: dict[str, Any], failures: list[str], warmup_error: str | None, report_only: bool = False
+) -> None:
     accuracy = report["accuracy"]
     latency = report["latency"]
     print(f"Evaluation target: {report['target']} ({report['fixture_count']} fixtures)")
@@ -536,7 +538,9 @@ def print_summary(report: dict[str, Any], failures: list[str], warmup_error: str
         )
     if warmup_error:
         print(f"Warm-up failed: {warmup_error}")
-    if failures:
+    if report_only:
+        print("Report only: no approved baseline exists yet. Review this report, then accept it.")
+    elif failures:
         print("Gate failed:")
         for failure in failures:
             print(f"- {failure}")
@@ -553,16 +557,34 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--base-url", help="Render API base URL; required for --target deployed.")
     parser.add_argument("--baseline", type=Path, default=DEFAULT_BASELINE)
     parser.add_argument("--json-output", type=Path, help="Write the full report to this path.")
-    parser.add_argument(
+    acceptance = parser.add_mutually_exclusive_group()
+    acceptance.add_argument(
         "--accept-baseline",
         action="store_true",
         help="Write/update the selected target baseline after a reviewed healthy run.",
+    )
+    acceptance.add_argument(
+        "--accept-report",
+        type=Path,
+        help="Accept a previously reviewed JSON report without making live calls again.",
     )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    if args.accept_report:
+        try:
+            report = json.loads(args.accept_report.read_text(encoding="utf-8"))
+            existing = _load_baseline(args.baseline) if args.baseline.exists() else None
+            baseline = make_baseline(report, existing)
+            _write_json(args.baseline, baseline)
+        except (OSError, ValueError, json.JSONDecodeError) as error:
+            print(f"Could not accept report: {error}", file=sys.stderr)
+            return 1
+        print(f"Approved {report['target']} baseline written to {args.baseline}.")
+        return 0
+
     fixtures = load_manifest().items
     if args.target == "local":
         outcomes, warmup_error, model = run_local(fixtures)
@@ -580,6 +602,7 @@ def main() -> int:
     if args.json_output:
         _write_json(args.json_output, report)
 
+    report_only = False
     if args.accept_baseline:
         try:
             existing = _load_baseline(args.baseline) if args.baseline.exists() else None
@@ -595,9 +618,15 @@ def main() -> int:
     else:
         try:
             failures = check_gate(report, _load_baseline(args.baseline))
+        except FileNotFoundError:
+            # A developer's first measurement is evidence to review, not a
+            # failed gate. CI has an earlier baseline preflight and therefore
+            # still cannot pass without an approved committed baseline.
+            failures = []
+            report_only = True
         except (OSError, ValueError, json.JSONDecodeError) as error:
             failures = [str(error)]
-    print_summary(report, failures, warmup_error)
+    print_summary(report, failures, warmup_error, report_only=report_only)
     return 1 if failures else 0
 
 
