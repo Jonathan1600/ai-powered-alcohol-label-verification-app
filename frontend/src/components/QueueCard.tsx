@@ -1,49 +1,44 @@
 import { useEffect, useRef } from 'react'
 import {
   Button,
+  ButtonGroup,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
   CardMedia,
   Icon,
+  Tag,
 } from '@trussworks/react-uswds'
 
-import { API_BASE_URL, type VerifyFailure } from '../lib/api'
+import { API_BASE_URL } from '../lib/api'
 import type { SeedQueueItem } from '../lib/contracts'
-import { cardStatus, type ItemCheck } from '../lib/queue'
+import { cardStatus } from '../lib/queue'
+import { DECISION_LABELS, failureMessage, unreadableGuidance } from '../lib/review'
+import type { Decision, ItemCheck } from '../lib/session'
 import StatusTag from './StatusTag'
 
 interface QueueCardProps {
   item: SeedQueueItem
   check: ItemCheck | undefined
+  decision: Decision | undefined
   onVerify: (item: SeedQueueItem) => void
+  onOpen: (item: SeedQueueItem) => void
+  // True for the card the agent just came back from, so focus lands where they
+  // left rather than at the top of a 44-card document.
+  restoreFocus: boolean
+  onFocusRestored: () => void
 }
 
-const UNREADABLE_REASONS: Record<string, string> = {
-  glare: 'Glare hides part of the label.',
-  angle: 'The label was photographed at too steep an angle.',
-  blur: 'The image is too blurred to read.',
-  resolution: 'The image resolution is too low to read.',
-}
-
-// A failure is never a statement about the label, so this copy never asks for a
-// better photograph the way an unreadable verdict does (ADR-012). Only the
-// rejected path shows the server text, which is written for this audience;
-// provider and network failures would otherwise leak browser internals like
-// "Failed to fetch" or "signal timed out".
-function failureMessage(failure: VerifyFailure): string {
-  switch (failure.kind) {
-    case 'provider':
-      return 'The verification service had a problem. This is not a result. Try again.'
-    case 'network':
-      return 'Could not reach the verification service. Check your connection and try again.'
-    case 'rejected':
-      return `This label could not be sent for verification. ${failure.message}`
-  }
-}
-
-function QueueCard({ item, check, onVerify }: QueueCardProps) {
+function QueueCard({
+  item,
+  check,
+  decision,
+  onVerify,
+  onOpen,
+  restoreFocus,
+  onFocusRestored,
+}: QueueCardProps) {
   const status = cardStatus(check)
   const checking = status === 'checking'
   const failure = check?.phase === 'failed' ? check.error : null
@@ -51,9 +46,10 @@ function QueueCard({ item, check, onVerify }: QueueCardProps) {
   const unreadableReason = unreadable ? check.result.unreadable_reason : null
   // The action is offered until a verdict exists; a failure leaves the item
   // unchecked, so the button comes back for a retry.
-  const showAction = status === 'not_yet_checked' || checking
+  const showVerify = status === 'not_yet_checked' || checking
 
   const headingRef = useRef<HTMLHeadingElement>(null)
+  const openRef = useRef<HTMLButtonElement>(null)
   // Whether the button held focus when it was pressed, recorded in the click
   // handler itself. Focus events are not usable here: they do not fire while
   // the document is unfocused, and the button is gone by the time a blur
@@ -61,7 +57,7 @@ function QueueCard({ item, check, onVerify }: QueueCardProps) {
   const buttonHadFocus = useRef(false)
 
   useEffect(() => {
-    if (showAction || !buttonHadFocus.current) return
+    if (showVerify || !buttonHadFocus.current) return
     buttonHadFocus.current = false
     // The button left the DOM while it held focus, so the browser has dropped
     // focus to <body>. Anchor the user to this card rather than the top of a
@@ -69,13 +65,29 @@ function QueueCard({ item, check, onVerify }: QueueCardProps) {
     if (document.activeElement === document.body || document.activeElement === null) {
       headingRef.current?.focus()
     }
-  }, [showAction])
+  }, [showVerify])
+
+  useEffect(() => {
+    if (!restoreFocus) return
+    openRef.current?.focus()
+    onFocusRestored()
+  }, [restoreFocus, onFocusRestored])
 
   return (
     <Card gridLayout={{ tablet: { col: 6 }, desktop: { col: 4 } }}>
       <CardHeader>
         <h2 className="usa-card__heading font-heading-lg" tabIndex={-1} ref={headingRef}>
-          {item.brand_name}
+          {/* The heading is the primary way into an item, which is what a card
+              grid leads a mouse user to click. A real button keeps it one tab
+              stop with an accessible name that already reads as the item. */}
+          <button
+            type="button"
+            ref={openRef}
+            className="usa-button usa-button--unstyled text-no-underline text-left"
+            onClick={() => onOpen(item)}
+          >
+            {item.brand_name}
+          </button>
         </h2>
       </CardHeader>
       <CardMedia>
@@ -88,14 +100,18 @@ function QueueCard({ item, check, onVerify }: QueueCardProps) {
       </CardMedia>
       <CardBody>
         <p className="margin-top-0 margin-bottom-1 text-base-dark">{item.application_reference}</p>
-        <StatusTag status={status} />
-        {/* The guidance is unconditional: the backend may report an unreadable
-            image without naming a defect, and that is the state where the
-            instruction matters most. */}
+        <div className="display-flex flex-wrap flex-align-center margin-bottom-05">
+          <StatusTag status={status} />
+          {decision && (
+            <Tag className="display-inline-flex flex-align-center text-no-uppercase font-body-sm padding-y-05 padding-x-1 margin-left-1 bg-white border border-base text-ink">
+              <Icon.Check aria-hidden className="margin-right-05" />
+              {DECISION_LABELS[decision.kind]}
+            </Tag>
+          )}
+        </div>
         {unreadable && (
           <p className="margin-bottom-0 font-body-sm text-base-dark">
-            {unreadableReason ? `${UNREADABLE_REASONS[unreadableReason]} ` : ''}A better photograph
-            is needed.
+            {unreadableGuidance(unreadableReason)}
           </p>
         )}
         {failure && (
@@ -105,26 +121,36 @@ function QueueCard({ item, check, onVerify }: QueueCardProps) {
           </p>
         )}
       </CardBody>
-      {showAction && (
-        <CardFooter>
-          {/* aria-disabled rather than disabled: disabling the element that
-              currently has focus makes the browser blur it, and that element is
-              exactly where a keyboard user is standing when they press Verify. */}
+      <CardFooter>
+        <ButtonGroup>
+          {showVerify && (
+            // aria-disabled rather than disabled: disabling the element that
+            // currently has focus makes the browser blur it, and that element is
+            // exactly where a keyboard user is standing when they press Verify.
+            <Button
+              type="button"
+              className={checking ? 'usa-button--disabled' : undefined}
+              aria-disabled={checking}
+              aria-label={`Verify label for ${item.brand_name}, ${item.application_reference}`}
+              onClick={(event) => {
+                if (checking) return
+                buttonHadFocus.current = document.activeElement === event.currentTarget
+                onVerify(item)
+              }}
+            >
+              {checking ? 'Checking…' : 'Verify'}
+            </Button>
+          )}
           <Button
             type="button"
-            className={`width-full${checking ? ' usa-button--disabled' : ''}`}
-            aria-disabled={checking}
-            aria-label={`Verify label for ${item.brand_name}, ${item.application_reference}`}
-            onClick={(event) => {
-              if (checking) return
-              buttonHadFocus.current = document.activeElement === event.currentTarget
-              onVerify(item)
-            }}
+            outline
+            aria-label={`Open the review for ${item.brand_name}, ${item.application_reference}`}
+            onClick={() => onOpen(item)}
           >
-            {checking ? 'Checking…' : 'Verify'}
+            Open review
           </Button>
-        </CardFooter>
-      )}
+        </ButtonGroup>
+      </CardFooter>
     </Card>
   )
 }

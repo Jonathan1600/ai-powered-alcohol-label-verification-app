@@ -1,42 +1,14 @@
 // The sort and state-derivation contract for the queue screen: attention
-// needed first, deterministic within a rank, and a card that never moves just
-// because Verify was pressed.
+// needed first, worked items out of the way, deterministic within a rank, and a
+// card that never moves just because Verify was pressed.
 
 import { describe, expect, it } from 'vitest'
 
-import type { SeedQueueItem, VerificationResult } from './contracts'
-import {
-  cardStatus,
-  checksReducer,
-  sortQueue,
-  STATUS_LABELS,
-  STATUS_RANK,
-  type CheckState,
-} from './queue'
+import { cardStatus, sortQueue, STATUS_LABELS, STATUS_RANK } from './queue'
+import type { CheckState, DecisionState } from './session'
+import { doneCheck, seedItem } from '../test/fixtures'
 
-function item(id: string): SeedQueueItem {
-  return {
-    id,
-    application_reference: `TTB-2026-${id}`,
-    brand_name: `Brand ${id}`,
-    status: 'not_yet_checked',
-    image_url: `/api/seed/images/${id}.png`,
-    thumbnail_url: `/api/seed/thumbnails/${id}.jpg`,
-    application: {
-      brand_name: `Brand ${id}`,
-      class_type: 'Vodka',
-      alcohol_content: '40% alc/vol',
-      net_contents: '750 mL',
-      bottler_info: 'Bottled by Example Co, Portland, OR',
-      beverage_class: 'distilled_spirits',
-      is_import: false,
-    },
-  }
-}
-
-function done(status: VerificationResult['status']): CheckState[string] {
-  return { phase: 'done', result: { status, fields: [], unreadable_reason: null } }
-}
+const done = doneCheck
 
 describe('cardStatus', () => {
   it('treats an absent entry as not yet checked', () => {
@@ -60,7 +32,7 @@ describe('cardStatus', () => {
 
 describe('sortQueue', () => {
   it('orders by attention needed: problems, review, unreadable, clean, unchecked', () => {
-    const items = [item('a'), item('b'), item('c'), item('d'), item('e')]
+    const items = [seedItem('a'), seedItem('b'), seedItem('c'), seedItem('d'), seedItem('e')]
     const checks: CheckState = {
       a: done('looks_correct'),
       b: done('unreadable'),
@@ -72,54 +44,56 @@ describe('sortQueue', () => {
   })
 
   it('keeps seed order within a rank', () => {
-    const items = [item('a'), item('b'), item('c')]
+    const items = [seedItem('a'), seedItem('b'), seedItem('c')]
     expect(sortQueue(items, {}).map((i) => i.id)).toEqual(['a', 'b', 'c'])
   })
 
   it('does not move a card when Verify is pressed', () => {
-    const items = [item('a'), item('b'), item('c')]
+    const items = [seedItem('a'), seedItem('b'), seedItem('c')]
     const before = sortQueue(items, {}).map((i) => i.id)
     const after = sortQueue(items, { b: { phase: 'checking' } }).map((i) => i.id)
     expect(after).toEqual(before)
   })
 
   it('moves exactly the item whose verdict arrived', () => {
-    const items = [item('a'), item('b'), item('c')]
+    const items = [seedItem('a'), seedItem('b'), seedItem('c')]
     const sorted = sortQueue(items, { b: done('problem_found') }).map((i) => i.id)
     expect(sorted).toEqual(['b', 'a', 'c'])
   })
 
+  it('sinks a decided item below the undecided items it shares a status with', () => {
+    const items = [seedItem('a'), seedItem('b'), seedItem('c')]
+    const checks: CheckState = {
+      a: done('problem_found'),
+      b: done('problem_found'),
+      c: done('problem_found'),
+    }
+    const decisions: DecisionState = { a: { kind: 'confirmed' } }
+    expect(sortQueue(items, checks, decisions).map((i) => i.id)).toEqual(['b', 'c', 'a'])
+  })
+
+  it('never lifts a decided item above a worse status', () => {
+    // A confirmed problem still outranks an undecided clean pass: the sort is
+    // about attention first and completion second.
+    const items = [seedItem('a'), seedItem('b')]
+    const checks: CheckState = { a: done('looks_correct'), b: done('problem_found') }
+    const decisions: DecisionState = { b: { kind: 'confirmed' } }
+    expect(sortQueue(items, checks, decisions).map((i) => i.id)).toEqual(['b', 'a'])
+  })
+
+  it('treats an override the same as a confirm for ordering', () => {
+    const items = [seedItem('a'), seedItem('b')]
+    const checks: CheckState = { a: done('needs_review'), b: done('needs_review') }
+    const decisions: DecisionState = {
+      a: { kind: 'overridden', corrected: 'looks_correct' },
+    }
+    expect(sortQueue(items, checks, decisions).map((i) => i.id)).toEqual(['b', 'a'])
+  })
+
   it('does not mutate its input', () => {
-    const items = [item('a'), item('b')]
+    const items = [seedItem('a'), seedItem('b')]
     sortQueue(items, { b: done('problem_found') })
     expect(items.map((i) => i.id)).toEqual(['a', 'b'])
-  })
-})
-
-describe('checksReducer', () => {
-  it('records each action against its item id', () => {
-    let state: CheckState = {}
-    state = checksReducer(state, { type: 'verify-started', id: 'a' })
-    expect(state.a).toEqual({ phase: 'checking' })
-
-    const result: VerificationResult = { status: 'looks_correct', fields: [], unreadable_reason: null }
-    state = checksReducer(state, { type: 'verify-succeeded', id: 'a', result })
-    expect(state.a).toEqual({ phase: 'done', result })
-
-    state = checksReducer(state, {
-      type: 'verify-failed',
-      id: 'a',
-      error: { kind: 'network', message: 'offline' },
-    })
-    expect(state.a).toEqual({ phase: 'failed', error: { kind: 'network', message: 'offline' } })
-  })
-
-  it('leaves unrelated items untouched and never mutates the previous state', () => {
-    const initial: CheckState = { a: { phase: 'checking' } }
-    const next = checksReducer(initial, { type: 'verify-started', id: 'b' })
-    expect(next).not.toBe(initial)
-    expect(next.a).toBe(initial.a)
-    expect(initial.b).toBeUndefined()
   })
 })
 
