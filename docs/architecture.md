@@ -152,12 +152,13 @@ overrides.
 
 ```mermaid
 flowchart LR
-    Push["Push to a branch in the repo"] --> J1["Job 1: engine tests<br/>offline, no API key"]
-    Push --> J2["Job 2: accuracy and latency<br/>live gpt-4.1-mini calls"]
+    Push["Push or pull request"] --> J1["Job 1: offline suites"]
+    PR["Latest same-repo PR revision"] --> J2["Job 2: live local-reader evaluation"]
+    Deploy["Manual post-deploy dispatch"] --> J3["Render endpoint measurement"]
     J1 --> E{"Engine<br/>tests pass?"}
     J2 --> A{"Accuracy<br/>holds?"}
     A -->|No| Block["Block merge"]
-    A -->|Yes| L{"Warm p95<br/>under 5 seconds?"}
+    A -->|Yes| L{"p95 within<br/>reviewed baseline?"}
     L -->|No| Block
     L -->|Yes| Allow["Allow merge to main"]
     E -->|No| Block
@@ -165,7 +166,8 @@ flowchart LR
 ```
 
 Job 2 requires `OPENAI_API_KEY` as a CI secret and therefore cannot run on pull
-requests from forks.
+requests from forks. Job 3 uses the deployed backend's key and records the
+production backend boundary; it cannot gate code that has not yet deployed.
 
 ---
 
@@ -279,26 +281,28 @@ hopefully.
 become the only accuracy levers, which the evaluation script must therefore
 guard.
 
-### ADR-009: Latency is enforced, not asserted
+### ADR-009: Live regressions are enforced, not asserted
 
-**Decision.** Warm p95 across the fixture set must stay under 5 seconds, and
-exceeding it blocks CI.
+**Decision.** A reviewed, versioned fixture baseline gates live accuracy and
+latency regressions. It rejects unsafe false-clears, material error growth, and
+p95 more than 25% above the approved value; no run is retried automatically.
 
-**Why.** A performance target that lives in a README drifts. The previous
-pilot's failure was entirely a latency failure, so the requirement is treated
-as binding.
+**Why.** A performance target that lives in a README drifts, but a threshold
+that known-correct requests cannot meet is a permanently red check and gets
+bypassed. The baseline makes real-model drift visible and blocking while the
+post-deploy measurement supplies evidence for the separate five-second product
+constraint.
 
 **Cost.** CI needs a real API key and spends a small amount per run. Mitigated
-by gating on p95 rather than max, reporting a per-stage breakdown on failure,
-and never retrying automatically.
+by one warm-up plus one sequential call per fixture, running only on the latest
+same-repository PR revision, gating on p95 rather than max, reporting a
+per-stage breakdown on failure, and never retrying automatically.
 
-**Revisited after phase 4.** The threshold in this decision is not currently
-achievable. Measured warm p95 for the extraction call alone is 20.4 seconds, and
-p50 sits between 5 and 7. A gate written as specified would fail every build,
-including correct ones, which is the precise failure mode this ADR exists to
-avoid. The gate is still built in phase 8 and still blocks on regression, but the
-absolute threshold has to be set from the deployed measurement rather than from
-the figure in the brief. See approach.md section 6, "Measured, phase 4".
+**Revisited after phase 4.** The original five-second threshold is not currently
+achievable: measured warm p95 for extraction alone was 20.4 seconds, with p50
+between 5 and 7. The phase 8 evaluator therefore has local-reader and deployed
+endpoint modes with separate baselines. It prevents regressions without calling
+the five-second requirement satisfied; that claim still awaits deployed evidence.
 
 ### ADR-010: USWDS through the React wrapper
 

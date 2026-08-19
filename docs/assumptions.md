@@ -220,9 +220,9 @@ corpus side.
 
 | Gap | Consequence | Status |
 | --- | --- | --- |
-| Every threshold in section 4 is unvalidated | Accuracy claims are not yet evidence | **Open.** Phase 8. The corpus is now the input to that measurement. |
-| Type size in millimetres is estimated from a photograph | Inherently unreliable, which is why it grades soft per ADR-005 | **Measured, and open.** The model will not produce millimetres at all, so it reports a cap-height ratio the reader converts (ADR-011). Estimates run high against a known 2.2mm rendering: 2.16, 2.4, 2.88, 3.24, 3.36mm across fixtures. Soft grading contains the damage; the calibration is phase 8. |
-| Bold detection has the same weakness | Same soft grading | **Still measurable, still soft.** Weight is genuinely not recoverable from the transcription the way capitalization is, so unlike `prefix_is_caps` it remains a question for the model. `warning-not-bold` and `warning-remainder-bold` cover both halves of 27 CFR 16.22(a). |
+| Every threshold in section 4 is unvalidated | Accuracy claims are not yet evidence | **Measurement implemented; baseline pending.** `tools.evaluate` reports per-field outcomes and guards reviewed regression limits once a live baseline is accepted. |
+| Type size in millimetres is estimated from a photograph | Inherently unreliable, which is why it grades soft per ADR-005 | **Measurable, still soft.** The evaluator now reports type-size MAE and bias against rendered ground truth; calibration needs a reviewed live run before changing the anchor. |
+| Bold detection has the same weakness | Same soft grading | **Measurable, still soft.** The evaluator reports prefix/remainder bold accuracy; neither signal is a hard gate. |
 | CFR values read from a mirror, not eCFR | Small risk of a stale value | **Open.** One manual eCFR pass before submission. |
 | `beverage_class` defaults to distilled spirits | A record that omits it silently gets the 0.3 point band | **Closed.** Every seed record sets it explicitly, and `test_every_record_sets_its_beverage_class_explicitly` fails the build if one stops. |
 | The `St` position rule is a heuristic | `120 St James St` reads the first `St` as Saint, which is right, but a street named only `St James` with no suffix would read as Saint too | **Closed for the covered senses.** `address-saint-and-street` carries `1 St James St, St. Louis, MO` against the spelled-out form and matches. |

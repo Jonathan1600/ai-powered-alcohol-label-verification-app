@@ -12,6 +12,7 @@ __pycache__/
 .venv/
 .pytest_cache/
 .ruff_cache/
+backend/evaluation-report.json
 
 # Local agent config. launch.json carries absolute machine paths.
 .claude/
