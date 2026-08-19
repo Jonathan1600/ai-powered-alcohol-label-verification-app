@@ -52,26 +52,37 @@ def minimum_type_size_mm(container: Volume | None) -> float:
 
 
 def word_diff(expected: str, actual: str) -> list[DiffOp]:
-    """Word-level edits turning the statutory text into what the label says.
+    """The full word-level alignment of the statutory text against the label's.
+
+    Every opcode is emitted, `equal` runs included, because the review view
+    renders the statutory text with the edits marked in place. Dropping the
+    unchanged runs would hand the client the changed chunks with nowhere to put
+    them back, and rebuilding that context by re-diffing in the browser would
+    put a second implementation of this comparison in a second language.
+
+    Words are aligned case-insensitively while the original text is what gets
+    returned. Capitalization is a separate regulated question, checked and
+    reported separately, so an all-capitals label whose wording was altered
+    shows the altered words rather than every word it contains.
 
     Returned as data, not markup, so the review view owns how it renders.
     """
     expected_words = expected.split()
     actual_words = actual.split()
-    matcher = difflib.SequenceMatcher(None, expected_words, actual_words)
+    matcher = difflib.SequenceMatcher(
+        None,
+        [word.casefold() for word in expected_words],
+        [word.casefold() for word in actual_words],
+    )
 
-    operations: list[DiffOp] = []
-    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
-        if tag == "equal":
-            continue
-        operations.append(
-            DiffOp(
-                op=tag,
-                expected=" ".join(expected_words[i1:i2]),
-                actual=" ".join(actual_words[j1:j2]),
-            )
+    return [
+        DiffOp(
+            op=tag,
+            expected=" ".join(expected_words[i1:i2]),
+            actual=" ".join(actual_words[j1:j2]),
         )
-    return operations
+        for tag, i1, i2, j1, j2 in matcher.get_opcodes()
+    ]
 
 
 def _result(verdict: Verdict, reason: str, actual: str | None, diff=None) -> FieldResult:
