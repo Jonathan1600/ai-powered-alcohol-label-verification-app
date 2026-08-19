@@ -19,6 +19,29 @@
   }
 }
 
+/* Batch progress. USWDS ships no progress bar component, so this is a plain
+   ARIA progressbar wearing USWDS color tokens. The number beside it carries
+   the same information, which is what keeps the bar from being the only
+   version of it. */
+.batch-progress {
+  background-color: #dfe1e2; /* base-lighter */
+  border-radius: 99rem;
+  height: 0.75rem;
+  overflow: hidden;
+}
+
+.batch-progress__fill {
+  background-color: #005ea2; /* primary */
+  height: 100%;
+  transition: width 0.2s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .batch-progress__fill {
+    transition: none;
+  }
+}
+
 /* Fixtures are 900x1200 portrait; a fixed aspect box keeps grid rows even. */
 .queue-card__thumb {
   aspect-ratio: 3 / 4;

@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Button, ButtonGroup, Grid, GridContainer, Icon } from '@trussworks/react-uswds'
 
-import { API_BASE_URL } from '../lib/api'
-import type { SeedQueueItem } from '../lib/contracts'
+import type { QueueItem } from '../lib/contracts'
 import { cardStatus } from '../lib/queue'
 import {
   failureMessage,
@@ -18,7 +17,7 @@ import StatusBanner from './StatusBanner'
 import WarningDiff from './WarningDiff'
 
 interface ReviewScreenProps {
-  item: SeedQueueItem
+  item: QueueItem
   check: ItemCheck | undefined
   decision: Decision | undefined
   // A snapshot of the queue order taken when this view opened, so working an
@@ -26,7 +25,7 @@ interface ReviewScreenProps {
   order: string[]
   onNavigate: (id: string) => void
   onBack: () => void
-  onVerify: (item: SeedQueueItem) => void
+  onVerify: (item: QueueItem) => void
   onDecide: (id: string, decision: Decision) => void
   onClearDecision: (id: string) => void
 }
@@ -43,8 +42,9 @@ function ReviewScreen({
   onClearDecision,
 }: ReviewScreenProps) {
   const status = cardStatus(check)
-  const result = check?.phase === 'done' ? check.result : null
+  const result = check?.phase === 'done' ? check.response.result : null
   const failure = check?.phase === 'failed' ? check.error : null
+  const busy = status === 'checking' || status === 'queued'
   const { previousId, nextId, position, total } = traversal(order, item.id)
 
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -139,16 +139,21 @@ function ReviewScreen({
                 CORS mode too means both share one cache entry that satisfies
                 both. Removing this breaks Verify from inside the review view.
                 The queue thumbnail needs no such thing; its URL is never
-                fetched. */}
+                fetched.
+
+                An added label is a blob: URL from this very document, which is
+                same-origin and is never fetched across one, so the attribute is
+                not just unnecessary there, it is a claim about an origin that
+                does not exist. */}
             <img
-              src={API_BASE_URL + item.image_url}
-              crossOrigin="anonymous"
+              src={item.imageUrl}
+              crossOrigin={item.source === 'seed' ? 'anonymous' : undefined}
               alt={`Label photograph for ${item.brand_name}, ${item.application_reference}. Its text is compared field by field in the table on this page.`}
               className="review-image__img radius-md border border-base-lighter"
             />
             <a
               className="usa-link display-inline-block margin-top-1"
-              href={API_BASE_URL + item.image_url}
+              href={item.imageUrl}
               target="_blank"
               rel="noreferrer"
             >
@@ -162,14 +167,23 @@ function ReviewScreen({
         <Grid tablet={{ col: 12 }} desktop={{ col: 8 }}>
           {result && <StatusBanner status={result.status} />}
 
-          {status === 'checking' && (
+          {busy && (
             <p className="font-body-lg">
-              <Icon.Autorenew aria-hidden className="margin-right-1 text-middle queue-spin" />
-              Checking this label against the application…
+              {status === 'queued' ? (
+                <>
+                  <Icon.Schedule aria-hidden className="margin-right-1 text-middle" />
+                  Queued. This label is waiting its turn in the batch.
+                </>
+              ) : (
+                <>
+                  <Icon.Autorenew aria-hidden className="margin-right-1 text-middle queue-spin" />
+                  Checking this label against the application…
+                </>
+              )}
             </p>
           )}
 
-          {!result && status !== 'checking' && (
+          {!result && !busy && (
             <div className="padding-3 bg-base-lightest radius-sm">
               <h2 className="margin-top-0 font-heading-md">Not checked yet</h2>
               <p>

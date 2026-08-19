@@ -98,11 +98,13 @@ describe('sortQueue', () => {
 })
 
 describe('status tables', () => {
-  it('cover all six states consistently', () => {
+  it('cover all seven states consistently', () => {
     expect(Object.keys(STATUS_RANK).sort()).toEqual(Object.keys(STATUS_LABELS).sort())
-    expect(Object.keys(STATUS_RANK)).toHaveLength(6)
-    // Checking shares the unchecked rank; that equality is what keeps a card
-    // in place while it is being verified.
+    expect(Object.keys(STATUS_RANK)).toHaveLength(7)
+    // Queued and checking both share the unchecked rank; that equality is what
+    // keeps a card in place from the moment a batch claims it until its verdict
+    // arrives, so it moves exactly once.
     expect(STATUS_RANK.checking).toBe(STATUS_RANK.not_yet_checked)
+    expect(STATUS_RANK.queued).toBe(STATUS_RANK.not_yet_checked)
   })
 })

@@ -324,14 +324,30 @@ every day.
 
 Batch is an operation on the queue, not a separate destination. Selecting
 several items, or verifying all unchecked ones, runs them through bounded
-concurrency (roughly 5 to 8 parallel calls) with per-item progress streamed
-back so cards flip from "checking" to their verdict individually rather than
-the whole batch landing at once. The queue re-sorts as results arrive, so
-problems surface while the rest is still running.
+concurrency (6 parallel calls) with per-item progress streamed back so cards
+flip from "queued" to "checking" to their verdict individually rather than the
+whole batch landing at once.
+
+The queue order deliberately holds still while the run is in flight, which
+revises an earlier version of this section that promised a live re-sort on
+every arriving result. Two hundred cards reflowing under the agent's pointer is
+motion, not information; problems surface early through a live "N need
+attention" counter and a sort-on-demand control instead, and the
+attention-needed sort applies itself when the run completes. ADR-013 records
+the revision. A run above 25 items confirms first, since it spends real money
+and minutes; a stop control aborts in-flight work without inventing verdicts
+for it, and five consecutive provider failures halt the run rather than burning
+the rest of the batch into a dead service (ADR-012).
 
 Ingestion for new work is images plus a CSV of application rows, matched by
-filename convention. Bulk confirm for clean matches. CSV export of the queue
-including any agent overrides.
+filename convention, validated all-or-nothing with every problem reported at
+once. Added labels live entirely in the browser and post to the same verify
+endpoint as seeded fixtures; there is no upload endpoint and no server-side
+ingestion state (ADR-014). Bulk confirm for clean matches, restricted to
+"looks correct" so a batch control can never sweep up a compliance finding.
+CSV export of the whole queue including any agent overrides, with
+formula-leading cells neutralised so a note typed by an agent cannot execute in
+someone else's spreadsheet.
 
 Deliberately not built: Redis, Celery, or any external queue. The README
 records that a durable queue is the production answer and that an in-process

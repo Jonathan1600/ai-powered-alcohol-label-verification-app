@@ -32,6 +32,36 @@ export interface SeedQueueResponse {
   items: SeedQueueItem[]
 }
 
+/**
+ * One row of the queue as the client holds it.
+ *
+ * Two things end up in the queue: the seeded fixtures the server serves, and
+ * labels the agent added from their own machine (see `lib/ingest.ts`). They
+ * differ in exactly one respect, where the image bytes live, so this is one
+ * shape with a discriminant rather than a union every component would have to
+ * narrow before reading a brand name.
+ *
+ * The naming split is deliberate and load-bearing. snake_case fields arrived
+ * from the wire unchanged; camelCase fields the client resolved for itself.
+ * `imageUrl` is absolute and ready for a `src`, which `SeedQueueItem.image_url`
+ * is not, and forgetting that difference is exactly the bug this convention is
+ * meant to make visible.
+ */
+export interface QueueItem {
+  source: 'seed' | 'added'
+  id: string
+  application_reference: string
+  brand_name: string
+  application: ApplicationRecord
+  imageUrl: string
+  thumbnailUrl: string
+  /**
+   * The bytes, for added items. Seeded items leave this undefined and are
+   * downloaded from `imageUrl` instead.
+   */
+  file?: File
+}
+
 export type VerdictStatus =
   | 'looks_correct'
   | 'needs_review'

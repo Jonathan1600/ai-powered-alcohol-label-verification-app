@@ -132,6 +132,36 @@ The deployed path has not been measured, so the number that matters does not
 exist yet. [docs/approach.md](docs/approach.md) section 6 carries the full
 measurement and the three available responses.
 
+## Batch verification and adding labels
+
+The queue's action bar runs the 200-to-300-item importer scenario: verify all
+unchecked (or a selection) through a pool of 6 concurrent calls, with per-item
+progress, a stop control, and a halt after 5 consecutive provider failures.
+The grid order holds still while a run is in flight (ADR-013); problems
+surface through a live counter and a sort-on-demand control.
+
+**Add labels** ingests images plus one CSV of application rows, matched by the
+CSV's `image` column to each file's name. Columns:
+
+```
+image, application_reference, brand_name, class_type, alcohol_content,
+net_contents, bottler_info, beverage_class, is_import, country_of_origin
+```
+
+`beverage_class` is one of `wine`, `distilled_spirits`, or `malt_beverage`;
+`is_import` reads true/false (also yes/no, 1/0); `country_of_origin` is
+required only when `is_import` is true, because the engine only compares it on
+imports. Validation is all-or-nothing: every problem is reported at once,
+against spreadsheet row numbers, and nothing enters the queue until the file is
+clean. Added labels live entirely in the browser and are posted to the same
+`/api/verify` as seeded items (ADR-014); they do not survive a reload.
+
+**Export CSV** writes the whole queue, unchecked items included: the
+recommendation, per-field verdicts, the agent's decision (with the corrected
+status and note on an override), and the model, prompt version, and server
+time that produced each result. Cells that a spreadsheet would run as formulas
+are neutralised with a leading apostrophe.
+
 ## Seed fixtures
 
 The demo queue is served from 44 committed synthetic labels that also back the
