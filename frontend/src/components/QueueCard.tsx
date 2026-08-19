@@ -7,23 +7,25 @@ import {
   CardFooter,
   CardHeader,
   CardMedia,
+  Checkbox,
   Icon,
   Tag,
 } from '@trussworks/react-uswds'
 
-import { API_BASE_URL } from '../lib/api'
-import type { SeedQueueItem } from '../lib/contracts'
+import type { QueueItem } from '../lib/contracts'
 import { cardStatus } from '../lib/queue'
 import { DECISION_LABELS, failureMessage, unreadableGuidance } from '../lib/review'
 import type { Decision, ItemCheck } from '../lib/session'
 import StatusTag from './StatusTag'
 
 interface QueueCardProps {
-  item: SeedQueueItem
+  item: QueueItem
   check: ItemCheck | undefined
   decision: Decision | undefined
-  onVerify: (item: SeedQueueItem) => void
-  onOpen: (item: SeedQueueItem) => void
+  selected: boolean
+  onToggleSelected: (id: string) => void
+  onVerify: (item: QueueItem) => void
+  onOpen: (item: QueueItem) => void
   // True for the card the agent just came back from, so focus lands where they
   // left rather than at the top of a 44-card document.
   restoreFocus: boolean
@@ -34,19 +36,24 @@ function QueueCard({
   item,
   check,
   decision,
+  selected,
+  onToggleSelected,
   onVerify,
   onOpen,
   restoreFocus,
   onFocusRestored,
 }: QueueCardProps) {
   const status = cardStatus(check)
-  const checking = status === 'checking'
+  // Queued and checking are both "hands off": one is waiting for the pool, the
+  // other is in it, and neither should take a second Verify.
+  const busy = status === 'checking' || status === 'queued'
   const failure = check?.phase === 'failed' ? check.error : null
-  const unreadable = check?.phase === 'done' && check.result.status === 'unreadable'
-  const unreadableReason = unreadable ? check.result.unreadable_reason : null
+  const result = check?.phase === 'done' ? check.response.result : null
+  const unreadable = result?.status === 'unreadable'
+  const unreadableReason = unreadable ? result.unreadable_reason : null
   // The action is offered until a verdict exists; a failure leaves the item
   // unchecked, so the button comes back for a retry.
-  const showVerify = status === 'not_yet_checked' || checking
+  const showVerify = status === 'not_yet_checked' || busy
 
   const headingRef = useRef<HTMLHeadingElement>(null)
   const openRef = useRef<HTMLButtonElement>(null)
@@ -92,7 +99,7 @@ function QueueCard({
       </CardHeader>
       <CardMedia>
         <img
-          src={API_BASE_URL + item.thumbnail_url}
+          src={item.thumbnailUrl}
           alt={`Label photograph for ${item.brand_name}, ${item.application_reference}`}
           loading="lazy"
           className="queue-card__thumb"
@@ -100,6 +107,27 @@ function QueueCard({
       </CardMedia>
       <CardBody>
         <p className="margin-top-0 margin-bottom-1 text-base-dark">{item.application_reference}</p>
+        {/* The visible word stays "Select" so 44 cards do not each shout their
+            own brand name down the page, while the hidden half gives the
+            checkbox an accessible name that identifies it in a screen reader's
+            form-controls list. Both live inside the one label, so the visible
+            text is a prefix of the accessible name and WCAG 2.5.3 holds. */}
+        <Checkbox
+          id={`select-${item.id}`}
+          name="queue-selection"
+          className="margin-bottom-1"
+          checked={selected}
+          onChange={() => onToggleSelected(item.id)}
+          label={
+            <>
+              Select
+              <span className="usa-sr-only">
+                {' '}
+                {item.brand_name}, {item.application_reference}
+              </span>
+            </>
+          }
+        />
         <div className="display-flex flex-wrap flex-align-center margin-bottom-05">
           <StatusTag status={status} />
           {decision && (
@@ -129,16 +157,16 @@ function QueueCard({
             // exactly where a keyboard user is standing when they press Verify.
             <Button
               type="button"
-              className={checking ? 'usa-button--disabled' : undefined}
-              aria-disabled={checking}
+              className={busy ? 'usa-button--disabled' : undefined}
+              aria-disabled={busy}
               aria-label={`Verify label for ${item.brand_name}, ${item.application_reference}`}
               onClick={(event) => {
-                if (checking) return
+                if (busy) return
                 buttonHadFocus.current = document.activeElement === event.currentTarget
                 onVerify(item)
               }}
             >
-              {checking ? 'Checking…' : 'Verify'}
+              {status === 'queued' ? 'Queued' : status === 'checking' ? 'Checking…' : 'Verify'}
             </Button>
           )}
           <Button

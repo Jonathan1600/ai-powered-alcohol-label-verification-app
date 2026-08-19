@@ -4,10 +4,17 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { API_BASE_URL, getSeedQueue, toVerifyFailure, VerifyError, verifyLabel } from './api'
-import type { SeedQueueItem, VerifyResponse } from './contracts'
+import {
+  API_BASE_URL,
+  getSeedQueue,
+  seedToQueueItem,
+  toVerifyFailure,
+  VerifyError,
+  verifyLabel,
+} from './api'
+import type { QueueItem, SeedQueueItem, VerifyResponse } from './contracts'
 
-const ITEM: SeedQueueItem = {
+const SEED: SeedQueueItem = {
   id: 'case-variance',
   application_reference: 'TTB-2026-0001',
   brand_name: "Stone's Throw",
@@ -24,6 +31,10 @@ const ITEM: SeedQueueItem = {
     is_import: false,
   },
 }
+
+// The client works in resolved URLs, so every test below goes through the same
+// lift the queue screen does rather than hand-building the client shape.
+const ITEM: QueueItem = seedToQueueItem(SEED)
 
 const VERIFY_RESPONSE: VerifyResponse = {
   result: { status: 'looks_correct', fields: [], unreadable_reason: null },
@@ -82,7 +93,7 @@ describe('verifyLabel', () => {
 
     const response = await verifyLabel(ITEM)
 
-    expect(fetchMock.mock.calls[0][0]).toBe(API_BASE_URL + ITEM.image_url)
+    expect(fetchMock.mock.calls[0][0]).toBe(ITEM.imageUrl)
     // Both legs are bounded: an unbounded image download would strand the card
     // in "checking" with no way out but a reload.
     expect((fetchMock.mock.calls[0][1] as RequestInit).signal).toBeInstanceOf(AbortSignal)
@@ -94,7 +105,7 @@ describe('verifyLabel', () => {
     const form = init.body as FormData
     expect(form.get('image')).toBeInstanceOf(File)
     expect((form.get('image') as File).name).toBe('case-variance.png')
-    expect(JSON.parse(form.get('application') as string)).toEqual(ITEM.application)
+    expect(JSON.parse(form.get('application') as string)).toEqual(SEED.application)
 
     expect(response).toEqual(VERIFY_RESPONSE)
   })
@@ -154,6 +165,67 @@ describe('verifyLabel', () => {
 
     const failure = await failureOf(verifyLabel(ITEM))
     expect(failure).toEqual({ kind: 'network', message: 'Failed to fetch' })
+  })
+
+  it('carries the caller stop control into both legs, so a batch can be stopped', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(new Blob(['x']), { status: 200 }))
+      .mockResolvedValueOnce(jsonResponse(VERIFY_RESPONSE))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const controller = new AbortController()
+    await verifyLabel(ITEM, controller.signal)
+
+    const signals = fetchMock.mock.calls.map(
+      (call) => (call[1] as RequestInit).signal as AbortSignal,
+    )
+    expect(signals).toHaveLength(2)
+    expect(signals.every((signal) => signal.aborted)).toBe(false)
+
+    controller.abort()
+
+    // Composed with our own deadline rather than replaced by it, so the
+    // caller's abort reaches the image download and the verify POST both.
+    expect(signals.every((signal) => signal.aborted)).toBe(true)
+  })
+})
+
+describe('verifyLabel, for a label the agent added', () => {
+  const added: QueueItem = {
+    ...ITEM,
+    source: 'added',
+    imageUrl: 'blob:http://localhost/added-1',
+    file: new File([new Uint8Array(64)], 'bourbon.png', { type: 'image/png' }),
+  }
+
+  it('posts its own bytes instead of downloading anything', async () => {
+    // Already inside the upload bound, so `downscale` passes the file straight
+    // through and no canvas is involved.
+    vi.stubGlobal('createImageBitmap', () =>
+      Promise.resolve({ width: 900, height: 1200, close: vi.fn() }),
+    )
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(VERIFY_RESPONSE))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const response = await verifyLabel(added)
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    expect(url).toBe(`${API_BASE_URL}/api/verify`)
+    expect((( init.body as FormData).get('image') as File).name).toBe('bourbon.png')
+    expect(response).toEqual(VERIFY_RESPONSE)
+  })
+
+  it('reports a file it cannot prepare as rejected, not as a network problem', async () => {
+    // "Check your connection" would be the wrong instruction for a file that
+    // simply will not decode.
+    vi.stubGlobal('createImageBitmap', () => Promise.reject(new Error('Unsupported image.')))
+    vi.stubGlobal('fetch', vi.fn())
+
+    const failure = await failureOf(verifyLabel(added))
+    expect(failure.kind).toBe('rejected')
+    expect(failure.message).toContain('Unsupported image.')
   })
 })
 

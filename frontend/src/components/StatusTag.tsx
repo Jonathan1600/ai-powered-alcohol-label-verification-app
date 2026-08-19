@@ -24,6 +24,9 @@ const STATUS_STYLES: Record<CardStatus, TagStyle> = {
   unreadable: { className: 'bg-base-dark text-white', Glyph: Icon.VisibilityOff },
   looks_correct: { className: 'bg-success-dark text-white', Glyph: Icon.CheckCircle },
   checking: { className: 'bg-primary-lighter text-ink', Glyph: Icon.Autorenew, spin: true },
+  // Queued reads as a quieter checking: the batch has claimed this card but
+  // nothing is happening to it yet, and a spinner would say otherwise.
+  queued: { className: 'bg-base-lighter text-ink', Glyph: Icon.Schedule },
   not_yet_checked: { className: 'bg-base-lightest text-ink', Glyph: Icon.Schedule },
 }
 

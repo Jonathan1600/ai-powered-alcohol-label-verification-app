@@ -15,7 +15,13 @@ import { describe, expect, it, vi } from 'vitest'
 import ReviewScreen from './ReviewScreen'
 import type { DiffOp } from '../lib/contracts'
 import type { ItemCheck } from '../lib/session'
-import { doneCheck, fieldResult, seedItem, verificationResult } from '../test/fixtures'
+import {
+  doneCheck,
+  fieldResult,
+  seedItem,
+  verificationResult,
+  verifyResponse,
+} from '../test/fixtures'
 
 const ORDER = ['a', 'b', 'c']
 
@@ -98,7 +104,9 @@ describe('states', () => {
     renderReview({
       check: {
         phase: 'done',
-        result: verificationResult('unreadable', { unreadable_reason: 'glare' }),
+        response: verifyResponse('unreadable', [], {
+          result: verificationResult('unreadable', { unreadable_reason: 'glare' }),
+        }),
       },
     })
 
