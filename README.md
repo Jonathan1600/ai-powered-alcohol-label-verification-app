@@ -146,15 +146,6 @@ false-clears, failed fixture calls, material accuracy regression, and p95 more
 than 25% above the approved measurement; it does not falsely claim the current
 five-second product requirement is met.
 
-### GPT-5.6 Luna migration
-
-The active extraction configuration is `gpt-5.6-luna` with explicit low
-reasoning effort. Luna supports the Responses API, image input, and structured
-outputs used by this service. The committed baseline below is historical
-`gpt-4.1-mini` evidence, so it must be replaced only after a reviewed Luna live
-evaluation; until then the live CI gate will intentionally reject it as a
-different model identity.
-
 ### Current local evaluation evidence
 
 The repository contains a reviewed local baseline for the committed 44-fixture
