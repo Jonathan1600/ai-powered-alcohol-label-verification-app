@@ -139,7 +139,9 @@ uv run python -m tools.evaluate --accept-report deployed-evaluation-report.json
 The initial report-only run succeeds even without a baseline; CI still fails
 before making model calls until the approved file is committed.
 
-The baseline binds the manifest hash, model, and prompt version. It blocks unsafe
+The baseline binds the manifest hash and model. Prompt version is retained as
+review metadata so a prompt change is evaluated against the existing approved
+thresholds without requiring a new baseline on every PR. The gate blocks unsafe
 false-clears, failed fixture calls, material accuracy regression, and p95 more
 than 25% above the approved measurement; it does not falsely claim the current
 five-second product requirement is met.

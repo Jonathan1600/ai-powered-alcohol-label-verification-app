@@ -77,6 +77,44 @@ def test_gate_allows_the_explicit_small_regression_but_rejects_the_next_one() ->
     assert any("Overall-status errors" in failure for failure in failures)
 
 
+def test_gate_allows_a_new_prompt_version_against_the_reviewed_baseline() -> None:
+    baseline_report = _healthy_report()
+    baseline = make_baseline(baseline_report)
+    new_prompt_report = deepcopy(baseline_report)
+    new_prompt_report["prompt_version"] = "new-test-prompt"
+
+    assert check_gate(new_prompt_report, baseline) == []
+
+
+def test_gate_rejects_hard_baseline_identity_changes() -> None:
+    report = _healthy_report()
+    baseline = make_baseline(report)
+
+    incompatible_schema_baseline = deepcopy(baseline)
+    incompatible_schema_baseline["schema_version"] = 2
+    schema_failures = check_gate(report, incompatible_schema_baseline)
+    assert any("Baseline schema_version is incompatible" in failure for failure in schema_failures)
+
+    for key, value in (("manifest_sha256", "different-fixtures"), ("model", "different-model")):
+        changed_report = deepcopy(report)
+        changed_report[key] = value
+
+        failures = check_gate(changed_report, baseline)
+
+        assert any(f"Baseline {key} is incompatible" in failure for failure in failures)
+
+
+def test_accepting_a_report_records_its_prompt_version() -> None:
+    baseline_report = _healthy_report()
+    baseline = make_baseline(baseline_report)
+    reviewed_report = deepcopy(baseline_report)
+    reviewed_report["prompt_version"] = "new-test-prompt"
+
+    updated_baseline = make_baseline(reviewed_report, baseline)
+
+    assert updated_baseline["prompt_version"] == "new-test-prompt"
+
+
 def test_baseline_p95_limit_is_twenty_five_percent_with_100ms_rounding() -> None:
     report = _healthy_report()
     report["latency"]["p95_ms"] = 1_001.0
