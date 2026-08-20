@@ -27,7 +27,7 @@ flowchart LR
         Seed["Seed fixtures<br/>read-only"]
     end
 
-    Model["OpenAI gpt-4.1-mini"]
+    Model["OpenAI gpt-5.6-luna\nreasoning: low"]
 
     Static -.->|"serves"| UI
     UI --> DS
@@ -54,7 +54,7 @@ sequenceDiagram
     participant A as Agent
     participant B as Browser
     participant R as Render API
-    participant M as gpt-4.1-mini
+    participant M as gpt-5.6-luna (low reasoning)
     participant E as Matching engine
 
     A->>B: Verify item
@@ -273,11 +273,12 @@ URL to configure across origins.
 
 ### ADR-008: One model, structured outputs
 
-**Decision.** `gpt-4.1-mini` only, with Pydantic schemas enforced through
-structured outputs.
+**Decision.** `gpt-5.6-luna` only, with explicit low reasoning effort and
+Pydantic schemas enforced through structured outputs.
 
-**Why.** Fast, low cost, supports image input, and fits the latency budget.
-Schema enforcement means the response conforms rather than being parsed
+**Why.** Luna is the GPT-5.6 tier for cost-sensitive, high-volume work. Low
+reasoning is selected explicitly for the latency-sensitive extraction path;
+schema enforcement means the response conforms rather than being parsed
 hopefully.
 
 **Cost.** No fallback if extraction quality regresses. Prompt and schema design

@@ -14,6 +14,8 @@ services:
       - key: OPENAI_API_KEY
         sync: false # set in the Render dashboard, never in this file
       - key: OPENAI_MODEL
-        value: gpt-4.1-mini
+        value: gpt-5.6-luna
+      - key: OPENAI_REASONING_EFFORT
+        value: low
       - key: ALLOWED_ORIGINS
         sync: false # Vercel production + preview origins, set at deploy time

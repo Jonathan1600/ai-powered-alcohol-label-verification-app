@@ -70,7 +70,7 @@ There is currently no `.env` at the repo root, so the backend has no API key.
 3. Frontend: `cd frontend && npm install && npm run dev`
 
 **Done when.** `http://localhost:5173` shows the green "Backend connected"
-alert reporting `gpt-4.1-mini`.
+alert reporting `gpt-5.6-luna`.
 
 **Note.** Running the Vite dev server from WSL against a `/mnt/c` path does not
 reliably pick up file changes made from Windows. If hot reload serves stale
@@ -110,7 +110,7 @@ phase ships onto infrastructure already known to work.
 
 | Check | Passing looks like |
 | --- | --- |
-| Render health | `GET https://<render-url>/api/health` returns `{"status":"ok","model":"gpt-4.1-mini"}` |
+| Render health | `GET https://<render-url>/api/health` returns `{"status":"ok","model":"gpt-5.6-luna"}` |
 | Vercel build | Frontend builds with `frontend` as root directory |
 | Cross-origin call | Vercel URL shows the green alert, no CORS error in console |
 | No cold start | A request after several idle minutes returns promptly |
@@ -192,7 +192,8 @@ against the engine, never derived from it. Full detail in
 
 ## Phase 4: Live extraction and the verify endpoint
 
-**Goal.** Real verification against `gpt-4.1-mini`, measured.
+**Goal.** Real verification against `gpt-5.6-luna` at low reasoning effort,
+measured.
 
 **Tasks**
 
