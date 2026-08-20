@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Analytics } from '@vercel/analytics/react'
 // Compiled USWDS CSS plus the wrapper's component styles. The USWDS JS is
 // deliberately never imported: react-uswds owns those behaviors, and loading
 // both initializes components twice (ADR-010).
@@ -11,5 +12,6 @@ import App from './App.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
+    <Analytics />
   </StrictMode>,
 )

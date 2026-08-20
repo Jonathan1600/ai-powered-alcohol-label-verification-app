@@ -347,6 +347,11 @@ from the repository root and finds no application.
 Vite inlines `VITE_`-prefixed variables at **build** time, so changing this
 later requires a redeploy. Restarting is not enough.
 
+### Vercel Web Analytics
+
+The frontend includes Vercel Web Analytics for aggregate page-view telemetry;
+enable Web Analytics in the Vercel project's **Analytics** tab after deploying.
+
 ### 3. Close the CORS loop
 
 Back in Render, set `ALLOWED_ORIGINS` to the Vercel production domain and
