@@ -30,7 +30,7 @@ the anecdotes are graded requirements in disguise:
 | Decision | Choice |
 | --- | --- |
 | Model provider | OpenAI |
-| Model | `gpt-4.1-mini`, and only this model |
+| Model | `gpt-5.6-luna`, with `low` reasoning effort |
 | API key | Supplied via `.env` as `OPENAI_API_KEY`, the SDK's default variable name. This file is never read, printed, or committed. |
 | Frontend | React, deployed on Vercel |
 | Backend | Python, deployed on Render (paid Starter instance, always-on) |
@@ -163,7 +163,8 @@ network call.
 
 An interface with two implementations:
 
-- An OpenAI `gpt-4.1-mini` implementation used in production.
+- An OpenAI `gpt-5.6-luna` implementation used in production, with explicit
+  low reasoning effort.
 - A deterministic mock used by the test suite and by an offline demo mode.
 
 This is the direct answer to the firewall constraint. A self-hosted vision
@@ -575,7 +576,7 @@ CI splits into two jobs, because they have very different properties:
 The engine job is the deterministic matching logic from section 5.3 against
 fixtures. It is fast, free, offline, and catches most regressions.
 
-The gate job makes real `gpt-4.1-mini` calls, so it needs `OPENAI_API_KEY` as a
+The gate job makes real `gpt-5.6-luna` calls, so it needs `OPENAI_API_KEY` as a
 CI secret and costs a small amount per run. Roughly 35 fixture labels against
 a mini-tier model is negligible, but it is not zero and it is worth knowing
 that it scales with push frequency.
@@ -623,8 +624,9 @@ to accept a slower result: shrink the image further, or trim the extraction
 schema. The 5 seconds is the fixed constraint and everything else is
 negotiable against it.
 
-`gpt-4.1-mini` is a good fit for this budget: it is the fast, low-cost tier of
-the 4.1 family, supports image input, and supports structured outputs. Since it
+`gpt-5.6-luna` is a good fit for this budget: it is the cost-sensitive,
+high-volume tier of the GPT-5.6 family and supports image input and structured
+outputs. Its low reasoning effort is selected explicitly for latency. Since it
 is the only permitted model, the accuracy lever is prompt and schema design
 rather than model selection, which raises the importance of the fixture set in
 section 5.8 for catching extraction regressions.
@@ -635,7 +637,7 @@ section 5.8 for catching extraction regressions.
 | --- | --- |
 | Frontend | React + Vite + `@trussworks/react-uswds` + `@uswds/uswds`, deployed on Vercel |
 | Backend | Python + FastAPI, deployed on Render (paid Starter, always-on) |
-| Model access | OpenAI Python SDK, `gpt-4.1-mini`, key from `OPENAI_API_KEY` |
+| Model access | OpenAI Python SDK, `gpt-5.6-luna` at low reasoning effort, key from `OPENAI_API_KEY` |
 | Contracts | Pydantic + OpenAI structured outputs |
 | Tests | pytest for the matching engine |
 | Persistence | None |
@@ -705,8 +707,8 @@ to prove out.
    API calls. This is the core.
 3. Fixture labels and their paired application records, since they are now the
    seed queue and every screen needs them to exist.
-4. LabelReader adapter and the single-label endpoint with real `gpt-4.1-mini`
-   calls and latency instrumentation.
+4. LabelReader adapter and the single-label endpoint with real `gpt-5.6-luna`
+   calls at low reasoning effort and latency instrumentation.
 5. Review queue screen seeded from fixtures, with the reset control, plus the
    review view with accepted/rejected reviewer outcomes.
 6. Batch verification across selected items, streamed progress, bulk accept,

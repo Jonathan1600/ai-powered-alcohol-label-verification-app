@@ -1,11 +1,15 @@
 """The LabelReader seam. Thin by design; its value is that it exists (ADR-002)."""
 
+from types import SimpleNamespace
+
 import pytest
 
+from app.config import DEFAULT_OPENAI_MODEL, DEFAULT_OPENAI_REASONING_EFFORT, Settings
 from app.matching import verify
 from app.matching.contracts import ExtractedLabel, OverallStatus, Readability, UnreadableReason
 from app.readers import LabelReader
 from app.readers.mock import MockLabelReader
+from app.readers.openai_reader import ExtractionError, OpenAILabelReader, build_reader
 from tests.conftest import field
 
 
@@ -55,3 +59,39 @@ def test_reader_and_engine_compose(application, extraction):
     extraction.brand_name = field("STONE’S THROW")
     reader = MockLabelReader(default=extraction)
     assert verify(application, reader.read(b"label.jpg")).status is OverallStatus.LOOKS_CORRECT
+
+
+def test_openai_reader_defaults_to_luna_with_low_reasoning() -> None:
+    reader = OpenAILabelReader(client=object())
+
+    assert reader._model == DEFAULT_OPENAI_MODEL
+    assert reader._reasoning_effort == DEFAULT_OPENAI_REASONING_EFFORT
+
+
+def test_reader_builder_applies_the_configured_model_and_reasoning(monkeypatch) -> None:
+    settings = Settings(openai_model="test-model", openai_reasoning_effort="none")
+    client = object()
+    monkeypatch.setattr("app.readers.openai_reader._shared_client", lambda *_: client)
+    reader = build_reader(settings)
+
+    assert reader._client is client
+    assert reader._model == "test-model"
+    assert reader._reasoning_effort == "none"
+
+
+def test_openai_reader_sends_the_configured_reasoning_effort() -> None:
+    class RecordingResponses:
+        def parse(self, **kwargs):
+            self.kwargs = kwargs
+            return SimpleNamespace(output_parsed=None, status="completed", incomplete_details=None)
+
+    responses = RecordingResponses()
+    reader = OpenAILabelReader(
+        client=SimpleNamespace(responses=responses),
+        reasoning_effort="low",
+    )
+
+    with pytest.raises(ExtractionError):
+        reader.read(b"\x89PNG\r\n\x1a\n")
+
+    assert responses.kwargs["reasoning"] == {"effort": "low"}

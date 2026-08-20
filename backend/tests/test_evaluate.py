@@ -16,7 +16,7 @@ def _healthy_report():
     fixture = _fixture("clean-bourbon-750")
     result = verify(fixture.application, fixture.ground_truth)
     outcome = score_result(fixture, result, {"model_ms": 1_000.0})
-    return summarize([outcome], "local", "gpt-4.1-mini", "test-prompt")
+    return summarize([outcome], "local", "gpt-5.6-luna", "test-prompt")
 
 
 def test_nearest_rank_uses_the_documented_p95_rule() -> None:
@@ -36,7 +36,7 @@ def test_score_includes_an_unexpected_conditional_field_as_an_error() -> None:
     report = summarize(
         [score_result(fixture, result, {"model_ms": 1_000.0})],
         "local",
-        "gpt-4.1-mini",
+        "gpt-5.6-luna",
         "test-prompt",
     )
 
@@ -50,7 +50,7 @@ def test_gate_never_allows_a_known_problem_to_become_looks_correct() -> None:
     report = summarize(
         [score_result(fixture, unsafe, {"model_ms": 1_000.0})],
         "local",
-        "gpt-4.1-mini",
+        "gpt-5.6-luna",
         "test-prompt",
     )
     baseline_report = _healthy_report()

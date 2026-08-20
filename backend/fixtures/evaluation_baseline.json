@@ -1,16 +1,16 @@
 {
   "manifest_sha256": "3c1cf47115e16b854bf61336007a4e3b9cf099a741d0f016a01958cc8c1caa39",
-  "model": "gpt-4.1-mini",
-  "prompt_version": "2026-08-18.2",
+  "model": "gpt-5.6-luna",
+  "prompt_version": "2026-08-20.1",
   "schema_version": 1,
   "targets": {
     "local": {
-      "approved_at": "2026-08-19T09:10:28.055136+00:00",
-      "field_error_baseline": 21,
-      "p95_baseline_ms": 7811.611527009518,
-      "p95_limit_ms": 9800.0,
+      "approved_at": "2026-08-20T15:33:55.885256+00:00",
+      "field_error_baseline": 7,
+      "p95_baseline_ms": 7400.77256099994,
+      "p95_limit_ms": 9300.0,
       "p95_metric": "model_ms",
-      "status_error_baseline": 10
+      "status_error_baseline": 7
     }
   }
 }

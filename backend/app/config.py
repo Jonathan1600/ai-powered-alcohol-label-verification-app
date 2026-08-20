@@ -1,10 +1,14 @@
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/app/config.py -> repo root, where the single shared .env lives.
 REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_OPENAI_MODEL = "gpt-5.6-luna"
+DEFAULT_OPENAI_REASONING_EFFORT = "low"
+ReasoningEffort = Literal["none", "low", "medium", "high", "xhigh", "max"]
 
 
 class Settings(BaseSettings):
@@ -14,7 +18,10 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    openai_model: str = "gpt-4.1-mini"
+    openai_model: str = DEFAULT_OPENAI_MODEL
+    # Luna defaults to medium reasoning. This extraction workload is latency
+    # sensitive, so select low explicitly rather than inheriting that default.
+    openai_reasoning_effort: ReasoningEffort = DEFAULT_OPENAI_REASONING_EFFORT
     # Generous enough that a slow but succeeding extraction is not thrown away,
     # bounded so a hung connection cannot pin a request open indefinitely. The
     # 5 second requirement is enforced by measurement, never by this timeout.

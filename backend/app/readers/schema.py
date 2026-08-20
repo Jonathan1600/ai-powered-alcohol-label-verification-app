@@ -97,7 +97,14 @@ class ObservedReadability(BaseModel):
             "plainly visible label is readable even when unusual or non-compliant."
         )
     )
-    reason: UnreadableReason | None = Field(description="Which defect. Null when readable.")
+    reason: UnreadableReason | None = Field(
+        description=(
+            "The one primary physical defect that prevents reading. Use glare for bright "
+            "reflection, overexposure, or washed-out contrast; angle for oblique perspective "
+            "distortion; and blur only for out-of-focus or motion softness when neither glare "
+            "nor angle is the primary cause. Null when readable."
+        )
+    )
     notes: str | None = Field(
         description="One short phrase naming what obscures the label. Null when readable."
     )

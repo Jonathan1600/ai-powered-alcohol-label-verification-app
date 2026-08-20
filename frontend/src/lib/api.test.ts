@@ -39,7 +39,7 @@ const ITEM: QueueItem = seedToQueueItem(SEED)
 const VERIFY_RESPONSE: VerifyResponse = {
   result: { status: 'looks_correct', fields: [], unreadable_reason: null },
   timings: { read_ms: 1, model_ms: 5000, matching_ms: 2, server_total_ms: 5003 },
-  model: 'gpt-4.1-mini',
+  model: 'gpt-5.6-luna',
   prompt_version: '2026-08-18.2',
   image_bytes: 95000,
 }

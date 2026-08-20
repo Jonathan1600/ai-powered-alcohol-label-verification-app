@@ -1,4 +1,4 @@
-"""The `LabelReader` that actually calls `gpt-4.1-mini`. See ADR-002 and ADR-008.
+"""The `LabelReader` that calls GPT-5.6 Luna. See ADR-002 and ADR-008.
 
 One call, structured outputs, no chain and no retries. The reasoning for each of
 those is in approach.md section 6: a chain multiplies the latency budget, and a
@@ -18,7 +18,7 @@ from functools import lru_cache
 
 from openai import APIError, APITimeoutError, OpenAI
 
-from app.config import Settings
+from app.config import DEFAULT_OPENAI_MODEL, DEFAULT_OPENAI_REASONING_EFFORT, Settings
 from app.matching.contracts import ExtractedLabel
 from app.readers.prompt import SYSTEM_PROMPT, USER_PROMPT
 from app.readers.schema import LabelObservation, to_contract
@@ -60,16 +60,18 @@ def sniff_mime(image: bytes) -> str:
 
 
 class OpenAILabelReader:
-    """Reads a label with one structured-output call to `gpt-4.1-mini`."""
+    """Reads a label with one structured-output call to GPT-5.6 Luna."""
 
     def __init__(
         self,
         client: OpenAI | None = None,
-        model: str = "gpt-4.1-mini",
+        model: str = DEFAULT_OPENAI_MODEL,
+        reasoning_effort: str = DEFAULT_OPENAI_REASONING_EFFORT,
         max_output_tokens: int = MAX_OUTPUT_TOKENS,
     ) -> None:
         self._client = client or OpenAI()
         self._model = model
+        self._reasoning_effort = reasoning_effort
         self._max_output_tokens = max_output_tokens
 
     def read(self, image: bytes) -> ExtractedLabel:
@@ -91,6 +93,7 @@ class OpenAILabelReader:
                 ],
                 text_format=LabelObservation,
                 max_output_tokens=self._max_output_tokens,
+                reasoning={"effort": self._reasoning_effort},
             )
         except APITimeoutError as error:
             raise ExtractionError("The extraction request timed out.") from error
@@ -128,6 +131,7 @@ def build_reader(settings: Settings) -> OpenAILabelReader:
     return OpenAILabelReader(
         client=_shared_client(settings.openai_timeout_seconds, settings.openai_max_retries),
         model=settings.openai_model,
+        reasoning_effort=settings.openai_reasoning_effort,
     )
 
 
