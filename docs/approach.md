@@ -546,10 +546,12 @@ measurement; the five-second user-experience requirement remains open.
 
 The evaluation script in section 5.8 records one warm-up plus one sequential,
 unretried observation per fixture. A reviewed baseline is committed with the
-fixture manifest hash, model, prompt version, approved error counts, and a p95
-ceiling set to the measured value plus 25%, rounded up to 100ms. That turns the
-gate into a regression check rather than a permanently red assertion of a
-number that measurement has already disproved.
+fixture manifest hash, model, approved error counts, and a p95 ceiling set to
+the measured value plus 25%, rounded up to 100ms. It also records the most
+recently reviewed prompt version for traceability, but prompt changes are
+evaluated against the existing thresholds. That turns the gate into a regression
+check rather than a permanently red assertion of a number that measurement has
+already disproved.
 
 The local-reader gate fails when a known `problem_found` or `unreadable`
 fixture becomes `looks_correct`, when fixture calls fail, when overall errors

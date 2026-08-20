@@ -87,13 +87,14 @@ class ObservedWarning(BaseModel):
 
 
 class ObservedReadability(BaseModel):
-    """Whether the image can be read at all."""
+    """Whether a human reviewer can directly read the material label text."""
 
     unreadable: bool = Field(
         description=(
-            "True only when the image genuinely cannot be read: heavy glare, severe "
-            "blur, or an angle that defeats transcription. A label you can read but "
-            "find unusual is readable."
+            "True when glare, blur, angle, or resolution makes any material "
+            "verification text hard for a human to read directly. Do not infer or "
+            "reconstruct obscured text from expected label or statutory wording. A "
+            "plainly visible label is readable even when unusual or non-compliant."
         )
     )
     reason: UnreadableReason | None = Field(description="Which defect. Null when readable.")

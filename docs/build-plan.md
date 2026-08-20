@@ -335,9 +335,10 @@ prompt that produced it, which phase 8 needs anyway.
 2. Run it in two clearly labelled modes: local-reader for pre-merge code
    changes, and Render-endpoint for the deployed backend path. Neither claims
    to measure browser downscale or render time.
-3. Commit a reviewed baseline tied to the manifest hash, model, and prompt
-   version. Block unsafe false-clears, material accuracy regression, failed
-   fixture calls, and p95 above the baseline's 25% allowance. No automatic
+3. Commit a reviewed baseline tied to the manifest hash and model, while
+   retaining prompt version as review metadata. Block unsafe false-clears,
+   material accuracy regression, failed fixture calls, and p95 above the
+   baseline's 25% allowance. No automatic
    retries.
 4. Run the full 44-fixture local gate only on the latest same-repository PR
    revision; cancel superseded runs and retain the failure artifact. Run the

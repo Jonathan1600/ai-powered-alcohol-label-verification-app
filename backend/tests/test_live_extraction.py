@@ -22,7 +22,7 @@ import pytest
 
 from app.config import get_settings
 from app.matching import verify
-from app.matching.contracts import OverallStatus
+from app.matching.contracts import OverallStatus, UnreadableReason
 from app.matching.warning import CANONICAL_WARNING
 from app.readers.openai_reader import build_reader
 from app.seed.loader import FIXTURE_DIR, load_manifest
@@ -100,11 +100,22 @@ def test_a_mismatched_brand_is_caught(reader, fixtures):
     assert verify(fixture.application, extraction).status is OverallStatus.PROBLEM_FOUND
 
 
-def test_a_blurred_label_is_reported_unreadable(reader, fixtures):
-    """Unreadable is a distinct outcome, never a confident guess. See ADR-003."""
-    fixture, extraction = read(reader, fixtures, "unreadable-blur")
+@pytest.mark.parametrize(
+    ("fixture_id", "reason"),
+    [
+        ("unreadable-glare", UnreadableReason.GLARE),
+        ("unreadable-blur", UnreadableReason.BLUR),
+        ("unreadable-angle", UnreadableReason.ANGLE),
+    ],
+)
+def test_a_human_unreadable_label_is_not_transcribed(reader, fixtures, fixture_id, reason):
+    """Obscured material text is unreadable, never a confident reconstruction."""
+    fixture, extraction = read(reader, fixtures, fixture_id)
     assert extraction.readability.unreadable
-    assert verify(fixture.application, extraction).status is OverallStatus.UNREADABLE
+    assert extraction.readability.reason is reason
+    result = verify(fixture.application, extraction)
+    assert result.status is OverallStatus.UNREADABLE
+    assert result.fields == []
 
 
 def test_the_type_size_is_estimated_at_all(reader, fixtures):

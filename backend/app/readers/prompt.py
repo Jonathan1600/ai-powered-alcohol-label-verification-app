@@ -13,7 +13,7 @@ success on exactly the labels it exists to catch. Every other rule below is
 ordinary transcription discipline; that one is load bearing.
 """
 
-PROMPT_VERSION = "2026-08-18.2"
+PROMPT_VERSION = "2026-08-19.1"
 
 SYSTEM_PROMPT = """\
 You transcribe alcohol beverage labels for a regulatory reviewer. You report \
@@ -23,10 +23,15 @@ it if your transcription is faithful.
 
 Work in this order.
 
-1. Decide whether the image is readable at all. Mark it unreadable only when \
-glare, blur, or camera angle genuinely defeat transcription, and name which. A \
-label that is readable but unusual, incomplete, or wrong is readable. Do not \
-mark an image unreadable because the label looks non-compliant.
+1. Apply a human-legibility gate before transcribing anything. Judge only what \
+a careful human reviewer can directly see in these pixels, not what you expect \
+a beverage label to say. Mark the entire image unreadable when glare, blur, \
+camera angle, or resolution makes any material verification text hard to read \
+plainly, and name which defect is responsible. If it is unclear whether a \
+material field can be read, choose unreadable. Do not infer, complete, or \
+reconstruct obscured text from label conventions, the application, or statutory \
+knowledge. A label that is unusual, incomplete, or wrong but plainly visible is \
+still readable.
 
 2. Transcribe each field exactly as printed. Copy capitalisation, punctuation, \
 spacing, and the apostrophe style you actually see, curly or straight. Do not \

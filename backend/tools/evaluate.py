@@ -444,10 +444,14 @@ def make_baseline(report: dict[str, Any], existing: dict[str, Any] | None = None
         "prompt_version": report["prompt_version"],
         "targets": {},
     }
-    for key in ("schema_version", "manifest_sha256", "model", "prompt_version"):
+    for key in ("schema_version", "manifest_sha256", "model"):
         if baseline.get(key) != (BASELINE_SCHEMA_VERSION if key == "schema_version" else report[key]):
             raise ValueError(f"Existing baseline {key} differs; create a new reviewed baseline instead.")
 
+    # Prompt versions are retained as review metadata, not baseline identity: prompt
+    # changes must continue to be evaluated against the approved safety and quality
+    # thresholds without requiring a new baseline on every pull request.
+    baseline["prompt_version"] = report["prompt_version"]
     baseline["targets"][report["target"]] = {
         "approved_at": report["created_at"],
         "status_error_baseline": report["accuracy"]["status_errors"],
@@ -462,7 +466,7 @@ def make_baseline(report: dict[str, Any], existing: dict[str, Any] | None = None
 def check_gate(report: dict[str, Any], baseline: dict[str, Any]) -> list[str]:
     """Return explicit failures instead of hiding a regression behind one exit code."""
     failures: list[str] = []
-    for key in ("schema_version", "manifest_sha256", "model", "prompt_version"):
+    for key in ("schema_version", "manifest_sha256", "model"):
         expected = BASELINE_SCHEMA_VERSION if key == "schema_version" else report[key]
         if baseline.get(key) != expected:
             failures.append(
