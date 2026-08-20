@@ -86,12 +86,14 @@ describe('exportRows', () => {
     expect(rows[0].agent_note).toBe('Warning typography needs correction.')
   })
 
-  it('attributes a result to the model and prompt that produced it', () => {
+  it('keeps server timing but excludes internal model metadata', () => {
     const rows = asObjects(
       exportCsv([seedItem('a')], session({ checks: { a: doneCheck('looks_correct') } })),
     )
-    expect(rows[0].model).toBe('gpt-4.1-mini')
-    expect(rows[0].prompt_version).toBe('2026-08-18.2')
+    expect(EXPORT_HEADER).not.toContain('model')
+    expect(EXPORT_HEADER).not.toContain('prompt_version')
+    expect(rows[0]).not.toHaveProperty('model')
+    expect(rows[0]).not.toHaveProperty('prompt_version')
     expect(rows[0].server_total_ms).toBe('5003')
   })
 

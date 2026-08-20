@@ -239,9 +239,9 @@ clean. Added labels live entirely in the browser and are posted to the same
 
 **Export CSV** writes the whole queue, unchecked items included: the
 recommendation, per-field verdicts, the agent's decision (with the corrected
-status and note on an override), and the model, prompt version, and server
-time that produced each result. Cells that a spreadsheet would run as formulas
-are neutralised with a leading apostrophe.
+status and note on an override), and the server time for each checked result.
+Cells that a spreadsheet would run as formulas are neutralised with a leading
+apostrophe.
 
 ## Seed fixtures
 
