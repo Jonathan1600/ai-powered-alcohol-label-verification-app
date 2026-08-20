@@ -4,7 +4,7 @@
 // Reviewer outcomes are the reason this exists. This prototype has no database,
 // so the only way a decision leaves the browser is through this file. Everything
 // else here is context that makes that outcome interpretable six months later:
-// which model, which prompt, how long it took.
+// what the tool found and how long verification took.
 //
 // Wide format, one row per application, one column per field verdict. Long
 // format would be tidier and would also mean an agent opening this in Excel
@@ -36,8 +36,6 @@ export const EXPORT_HEADER: string[] = [
   ...FIELD_ORDER.map((field) => `${field}_verdict`),
   'reviewer_outcome',
   'agent_note',
-  'model',
-  'prompt_version',
   'server_total_ms',
 ]
 
@@ -77,8 +75,6 @@ export function exportRows(items: readonly QueueItem[], session: SessionState): 
       }),
       decision ? decisionLabel(decision) : '',
       decisionNote(decision),
-      response?.model ?? '',
-      response?.prompt_version ?? '',
       response ? String(Math.round(response.timings.server_total_ms)) : '',
     ])
   }
